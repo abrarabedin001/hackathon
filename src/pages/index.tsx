@@ -60,19 +60,20 @@ export default Home;
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
+  console.log("testing for session");
+  console.log(sessionData);
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined },
+    { enabled: sessionData?.user !== undefined }
   );
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
-      {sessionData &&  <Link href="/todo"> Todo App</Link>}
-     
-     
+      {sessionData && <Link href="/todo"> Todo App</Link>}
+
       <p className="text-center text-2xl text-white">
-      {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
         {secretMessage && <span> - {secretMessage}</span>}
       </p>
       <button
