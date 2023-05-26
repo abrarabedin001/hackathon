@@ -21,7 +21,7 @@ export const teamRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.task.findMany();
+    return ctx.prisma.team.findMany();
   }),
 
   delete: protectedProcedure
