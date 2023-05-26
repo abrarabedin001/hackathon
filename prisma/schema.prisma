@@ -67,9 +67,20 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Todo {
-  id     String @id @default(cuid())
-  userId String
-  todo   String
-  user   User   @relation(references: [id], onDelete: Cascade, fields: [userId])
+model Task {
+  id          String @id @default(cuid())
+  userId      String
+  name        String
+  createdBy   User   @relation(references: [id], onDelete: Cascade, fields: [userId])
+  team        String
+  createdAt   DateTime @default(now())
+  priority    Priority @default(LOW)
+  DueDate     DateTime
+
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
 }
