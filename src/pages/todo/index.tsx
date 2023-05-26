@@ -14,12 +14,14 @@ type Todo = RouterOutputs["todo"]["getAll"][0];
 const Todo = () => {
   const utils = api.useContext();
 
+  const { data: session } = useSession();
+
   const ref = useRef<HTMLInputElement>(null);
   const [sentence, setSentence] = useState("");
   const [state, setState] = useState(true);
   const { data: list } = api.todo.getAll.useQuery();
   // const queryClient = useQueryClient();
-
+  const { mutateAsync: mutate2 } = api.team.insert.useMutation();
   const { mutateAsync, isLoading } = api.todo.insert.useMutation({
     onSuccess(input) {
       void utils.todo.getAll.invalidate();
@@ -29,7 +31,7 @@ const Todo = () => {
   const sendData = () => {
     console.log("showing value of use Ref:");
     console.log(ref.current?.value);
-    void mutateAsync({ text: ref.current?.value }, {});
+    void mutate2({ name: "test", creatorid: session?.user.id });
   };
 
   return (
