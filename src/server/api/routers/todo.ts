@@ -11,25 +11,25 @@ export const todoRouter = createTRPCRouter({
   insert: protectedProcedure
     .input(z.object({ text: z.string() }))
     .mutation(({ ctx, input }) => {
-
-      return ctx.prisma.todo.create({
+      return ctx.prisma.task.create({
         data: {
           userId: ctx.session.user.id,
-          todo: input.text
-        }
-      })
+          name: input.text,
+        },
+      });
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.todo.findMany();
-
+    return ctx.prisma.task.findMany();
   }),
 
-  delete: protectedProcedure.input(z.object({ text: z.string() })).mutation(({ ctx, input }) => {
-    return ctx.prisma.todo.delete({
-      where: {
-        id: input.text,
-      }
-    })
-  }),
+  delete: protectedProcedure
+    .input(z.object({ text: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.delete({
+        where: {
+          id: input.text,
+        },
+      });
+    }),
 });

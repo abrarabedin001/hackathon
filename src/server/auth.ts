@@ -39,13 +39,19 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session: ({ session, user }) => ({
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.user = user;
+      }
+      return token;
+    },
+    session: ({ session, token, user }) => ({
       ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
+      user: token.user,
     }),
   },
   adapter: PrismaAdapter(prisma),
@@ -63,11 +69,19 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
-
+        //const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+        const user = await prisma.emailPassword.findFirst({
+          where: { email: credentials?.username },
+        });
+        //console.log("testing here:     ");
+        //console.log(user);
         if (user) {
           // Any object returned will be saved in `user` property of the JWT
-          return user;
+          if (user.password === credentials?.password) {
+            return { id: user.id, email: user.email };
+          } else {
+            return null;
+          }
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
