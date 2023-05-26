@@ -7,11 +7,17 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
-export const todoRouter = createTRPCRouter({
+export const teamRouter = createTRPCRouter({
   insert: protectedProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ name: z.string(), creatorid: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.team.create({ data: {} });
+      return ctx.prisma.team.create({
+        data: {
+          name: input.name,
+          creatorId: input.creatorid,
+          noTeamMembers: 0,
+        },
+      });
     }),
 
   getAll: publicProcedure.query(({ ctx }) => {
