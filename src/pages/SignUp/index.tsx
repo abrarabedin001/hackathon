@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type RouterOutputs } from "~/utils/api";
 // import { trpc } from "../utils/trpc";
 
-type Todo = RouterOutputs["todo"]["getAll"][0];
+type Todo = RouterOutputs["task"]["getAll"][0];
 
 const Todo = () => {
   const utils = api.useContext();

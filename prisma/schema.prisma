@@ -55,7 +55,7 @@ model Session {
 
 model User {
   id            String         @id @default(cuid())
-  name          String?
+  name          String
   email         String?        @unique
   emailVerified DateTime?
   image         String?
@@ -77,14 +77,16 @@ model VerificationToken {
 
 model Task {
   id           String         @id @default(cuid())
-  userId       String?
+  userId       String
+  isCompleted Boolean         @default(false)
   name         String
+  teamId       String?        @default("Personal")
   createdBy    User?           @relation(references: [id], onDelete: Cascade, fields: [userId])
-  team         String?
+  team         Team?            @relation(references: [id], onDelete: Cascade, fields: [teamId])
   createdAt    DateTime?       @default(now())
   priority     Priority?       @default(LOW)
   DueDate      DateTime?
-  TaskAssigned TaskAssigned[]
+  // TaskAssigned TaskAssigned[]
 }
 
 enum Priority {
@@ -99,6 +101,7 @@ model Team {
   creator       User   @relation(fields: [creatorId], references: [id])
   creatorId     String
   noTeamMembers Int
+  task Task[]
 }
 
 model TeamUser {
@@ -118,7 +121,7 @@ enum Permissions {
 model TaskAssigned {
   id     String @id @default(cuid())
   user   User   @relation(fields: [userId], references: [id])
-  task   Task   @relation(fields: [taskId], references: [id])
+  // task   Task   @relation(fields: [taskId], references: [id])
   userId String
   taskId String
 }
