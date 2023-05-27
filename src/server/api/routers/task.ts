@@ -14,18 +14,62 @@ export const taskRouter = createTRPCRouter({
         userId: z.string(),
         // isCompleted: z.boolean(),
         name: z.string(),
-        teamId: z.string(),
-        priority: z.string(),
-        dueDate: z.date(),
+        teamId: z.string().optional(),
+        priority: z.enum(["HIGH", "MEDIUM", "LOW"]).optional(),
+        dueDate: z.date().optional(),
       })
     )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.task.create({
         data: {
-          userId: ctx.session.user.id,
-          // isCompleted: input.isCompleted,
+          ...input,
+        },
+      });
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().optional(),
+        dueDate: z.date().optional(),
+        isComplete: z.boolean().optional(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
           name: input.name,
-          teamId: input.teamId,
+          DueDate: input.dueDate,
+          isCompleted: input.isComplete,
+          // TaskAssigned: {
+          //   create: [
+          //     {
+          //       user: {
+          //         connect: {
+          //           id: input.assignedTo,
+          //         },
+          //       },
+          //     },
+          //   ],
+          // },
+        },
+      });
+    }),
+  assignUser: protectedProcedure
+    .input(
+      z.object({
+        taskid: z.string().optional(),
+        assignedTo: z.string().optional(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.taskAssigned.create({
+        data: {
+          userId:input.assignedTo,
+          taskId: input.taskid
         },
       });
     }),
@@ -57,12 +101,21 @@ export const taskRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.task.findMany();
   }),
-  getOne: protectedProcedure
-    .input(z.object({ id: z.string() }))
+  getFromSingleUser: protectedProcedure
+    .input(z.object({ userid: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.task.findUnique({
+      return ctx.prisma.task.findMany({
         where: {
-          id: input.id,
+          userId: input.userid,
+        },
+      });
+    }),
+  getFromSingleTeam: protectedProcedure
+    .input(z.object({ teamid: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.task.findMany({
+        where: {
+          teamId: input.teamid,
         },
       });
     }),

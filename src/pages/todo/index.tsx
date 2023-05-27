@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type RouterOutputs } from "~/utils/api";
 // import { trpc } from "../utils/trpc";
 
-type Todo = RouterOutputs["todo"]["getAll"][0];
+type Todo = RouterOutputs["task"]["getAll"][0];
 
 const Todo = () => {
   const utils = api.useContext();
@@ -19,10 +19,17 @@ const Todo = () => {
   const ref = useRef<HTMLInputElement>(null);
   const [sentence, setSentence] = useState("");
   const [state, setState] = useState(true);
-  const { data: list } = api.task.getAll.useQuery();
+  const { data: list } = api.task.getFromSingleUser.useQuery({
+    userid: session?.user.id,
+  });
   // const queryClient = useQueryClient();
-  const { mutateAsync: mutate2 } = api.team.insert.useMutation();
+  // const { mutateAsync: mutate2 } = api.team.insert.useMutation();
   const { mutateAsync: mutate1, isLoading } = api.task.insert.useMutation({
+    onSuccess(input) {
+      void utils.task.getAll.invalidate();
+    },
+  });
+  const { mutateAsync: mutate3 } = api.task.assignUser.useMutation({
     onSuccess(input) {
       void utils.task.getAll.invalidate();
     },
@@ -31,14 +38,23 @@ const Todo = () => {
   const sendData = () => {
     console.log("showing value of use Ref:");
     console.log(ref.current?.value);
-    // void mutate2({ name: "test", creatorid: session?.user.id });
-    void mutate1({
-      userId: session?.user.id,
+    // void mutate2({ name: "test5", creatorid: session?.user.id });
+    // void mutate1({
+    //   userId: session?.user.id,
+    //   // isCompleted: false,
+    //   name: "ami bhat khai 2 3 4",
+    //   teamId: "cli4rvecl0005vjx0mgf2plfd",
+    //   priority: "HIGH",
+    //   // dueDate: new Date(),
+    // });
+    void mutate3({
+      taskid: "cli62mpdk000tvj24lylqpsu3",
+
       // isCompleted: false,
-      name: "ami bhat khai 2",
-      teamId: "cli4rvecl0005vjx0mgf2plfd",
-      priority: "LOW",
-      dueDate: new Date(),
+      assignedTo: "cli41mcnj0000vjpgoi73so5a",
+      // teamId: "cli4rvecl0005vjx0mgf2plfd",
+      // priority: "HIGH",
+      // dueDate: new Date(),
     });
   };
 
