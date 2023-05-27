@@ -45,10 +45,13 @@ export const teamRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.teamUser.create({
         data: {
-          userId: input.userId,
           teamId: input.teamId,
+          // userId: input.userId,
+          userId: "cli41mcnj0000vjpgoi73so5a",
+
           permissions: "VIEW",
           inviteAccepted: "UNDECIDED",
+          user:
         },
       });
     }),
