@@ -102,20 +102,29 @@ model Team {
   creatorId     String
   noTeamMembers Int
   task Task[]
+  TeamUser TeamUser[]
 }
 
 model TeamUser {
   id             String  @id @default(cuid())
-  user           User    @relation(fields: [userId], references: [id])
+  user           User    @relation(references: [id], onDelete: Cascade, fields: [userId] )
   userId         String
-  permissions    String
-  inviteAccepted Boolean
+  team           Team  @relation( references: [id],onDelete: Cascade,fields: [teamId])
+  teamId         String
+  permissions    PERMISSIONS
+  inviteAccepted DECISSIONS
 }
 
-enum Permissions {
+enum PERMISSIONS {
   ADMIN
   EDIT
   VIEW
+}
+
+enum DECISSIONS {
+  UNDECIDED
+  ACCEPTED
+  DENIED
 }
 
 model TaskAssigned {
