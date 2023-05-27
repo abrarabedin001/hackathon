@@ -9,26 +9,70 @@ import {
 
 export const taskRouter = createTRPCRouter({
   insert: protectedProcedure
-    .input(z.object({ text: z.string() }))
+    .input(
+      z.object({
+        userId: z.string(),
+        // isCompleted: z.boolean(),
+        name: z.string(),
+        teamId: z.string(),
+        priority: z.string(),
+        dueDate: z.date(),
+      })
+    )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.task.create({
         data: {
           userId: ctx.session.user.id,
-          name: input.text,
+          // isCompleted: input.isCompleted,
+          name: input.name,
+          teamId: input.teamId,
         },
       });
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
+  completed: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isCompleted: true,
+        },
+      });
+    }),
+  unCompleted: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isCompleted: false,
+        },
+      });
+    }),
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.task.findMany();
   }),
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.task.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
 
   delete: protectedProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.task.delete({
         where: {
-          id: input.text,
+          id: input.id,
         },
       });
     }),

@@ -19,19 +19,27 @@ const Todo = () => {
   const ref = useRef<HTMLInputElement>(null);
   const [sentence, setSentence] = useState("");
   const [state, setState] = useState(true);
-  const { data: list } = api.todo.getAll.useQuery();
+  const { data: list } = api.task.getAll.useQuery();
   // const queryClient = useQueryClient();
   const { mutateAsync: mutate2 } = api.team.insert.useMutation();
-  const { mutateAsync, isLoading } = api.todo.insert.useMutation({
+  const { mutateAsync: mutate1, isLoading } = api.task.insert.useMutation({
     onSuccess(input) {
-      void utils.todo.getAll.invalidate();
+      void utils.task.getAll.invalidate();
     },
   });
 
   const sendData = () => {
     console.log("showing value of use Ref:");
     console.log(ref.current?.value);
-    void mutate2({ name: "test", creatorid: session?.user.id });
+    // void mutate2({ name: "test", creatorid: session?.user.id });
+    void mutate1({
+      userId: session?.user.id,
+      // isCompleted: false,
+      name: "ami bhat khai 2",
+      teamId: "cli4rvecl0005vjx0mgf2plfd",
+      priority: "LOW",
+      dueDate: new Date(),
+    });
   };
 
   return (
@@ -57,7 +65,7 @@ const Todo = () => {
             <input
               type="checkbox"
               name={el.id}
-              value={el.todo}
+              value={el.name}
               className="line-through"
               onClick={() => {
                 document.getElementById(el.id).style.textDecoration =
@@ -65,7 +73,7 @@ const Todo = () => {
                 console.log();
               }}
             ></input>
-            {el.todo}
+            {el.name}
           </div>
         ))}
       </div>

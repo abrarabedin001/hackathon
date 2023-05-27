@@ -11,10 +11,10 @@ import { teamRouter } from "./routers/team";
  */
 export const appRouter = createTRPCRouter({
   example: exampleRouter,
-  todo: taskRouter,
+  task: taskRouter,
   auth: authRouter,
   team: teamRouter,
 });
-
+// api.task.getall()
 // export type definition of API
 export type AppRouter = typeof appRouter;
