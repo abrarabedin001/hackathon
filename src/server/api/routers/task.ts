@@ -7,7 +7,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
-export const todoRouter = createTRPCRouter({
+export const taskRouter = createTRPCRouter({
   insert: protectedProcedure
     .input(z.object({ text: z.string() }))
     .mutation(({ ctx, input }) => {
