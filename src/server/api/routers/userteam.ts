@@ -30,14 +30,25 @@ export const userTeamRouter = createTRPCRouter({
         userId: z.string(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.userTeam.create({
-        data: {
+    .mutation(async ({ ctx, input }) => {
+      let userTeams = await ctx.prisma.userTeam.findMany({
+        where: {
           teamId: input.teamId,
-
           userId: input.userId,
         },
       });
+
+      if (userTeams.length >= 5) {
+        return new Response("no more people can be invited");
+      }
+
+      let userTeam = ctx.prisma.userTeam.create({
+        data: {
+          teamId: input.teamId,
+          userId: input.userId,
+        },
+      });
+      return userTeam;
     }),
   updateUserTeam: protectedProcedure
     .input(
@@ -89,7 +100,6 @@ export const userTeamRouter = createTRPCRouter({
           team: {
             connect: { id: input.teamId }, // Specify the team you want to connect
           },
-
           user: {
             connect: { id: input.userId }, // Specify the team you want to connect
           },

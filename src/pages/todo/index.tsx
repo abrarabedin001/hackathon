@@ -28,7 +28,7 @@ const Todo = () => {
   console.log("test$$$$$$$$$$$$$$$$$$$$");
   console.log(assignUser);
   // const queryClient = useQueryClient();
-  // const { mutateAsync: mutate2 } = api.team.insert.useMutation();
+  const { mutateAsync: mutate2 } = api.team.insert.useMutation();
   const { mutateAsync: mutate1, isLoading } = api.task.insert.useMutation({
     onSuccess(input) {
       void utils.task.getAll.invalidate();
@@ -49,11 +49,16 @@ const Todo = () => {
       void utils.task.getAll.invalidate();
     },
   });
+  // const { mutateAsync: mutate6 } = api.team.insert.useMutation({
+  //   onSuccess(input) {
+  //     void utils.task.getAll.invalidate();
+  //   },
+  // });
 
   const sendData = () => {
     console.log("showing value of use Ref:");
     console.log(ref.current?.value);
-    // void mutate2({ name: "test5", creatorid: session?.user.id });
+    void mutate2({ name: "testLimit", creatorid: session?.user.id });
     // void mutate1({
     //   userId: session?.user.id,
     //   // isCompleted: false,
@@ -80,19 +85,19 @@ const Todo = () => {
     //   // priority: "HIGH",
     //   // dueDate: new Date(),
     // });
-    void mutate5({
-      userId: assignUser,
+    // void mutate5({
+    //   userId: assignUser,
 
-      // isCompleted: false,
-      teamId: "asdfasdgasdg",
+    //   // isCompleted: false,
+    //   teamId: "asdfasdgasdg",
 
-      permissions: "ADMIN",
-      inviteAccepted: "ACCEPTED",
+    //   permissions: "ADMIN",
+    //   inviteAccepted: "ACCEPTED",
 
-      // teamId: "cli4rvecl0005vjx0mgf2plfd",
-      // priority: "HIGH",
-      // dueDate: new Date(),
-    });
+    //   // teamId: "cli4rvecl0005vjx0mgf2plfd",
+    //   // priority: "HIGH",
+    //   // dueDate: new Date(),
+    // });
   };
 
   return (
