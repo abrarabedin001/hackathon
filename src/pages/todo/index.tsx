@@ -15,6 +15,8 @@ const Todo = () => {
   const utils = api.useContext();
 
   const { data: session } = useSession();
+  console.log("///////////////////////");
+  console.log(session);
 
   const ref = useRef<HTMLInputElement>(null);
   const [sentence, setSentence] = useState("");

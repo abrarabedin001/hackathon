@@ -73,9 +73,11 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.emailPassword.findFirst({
           where: { email: credentials?.username },
         });
-        let buffer = null;
 
         if (user) {
+          // Any object returned will be saved in `user` property of the JWT
+          let buffer = null;
+
           const ifUser = await prisma.user.findUnique({
             where: {
               email: user.email,
@@ -92,14 +94,12 @@ export const authOptions: NextAuthOptions = {
             });
             console.log(res);
             buffer = res;
+          } else {
+            buffer = ifUser;
           }
-        }
-        //console.log("testing here:     ");
-        //console.log(user);
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
+
           if (user.password === credentials?.password) {
-            return { id: buffer?.id, email: user.email };
+            return { id: buffer?.id, email: user.email, name: user.email };
           } else {
             return null;
           }
