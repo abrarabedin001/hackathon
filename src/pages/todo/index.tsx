@@ -22,6 +22,11 @@ const Todo = () => {
   const { data: list } = api.task.getFromSingleUser.useQuery({
     userid: session?.user.id,
   });
+  const assignUser = api.userteam.findUser.useQuery({
+    email: "ahmad.abrar.abedin@g.bracu.ac.bd",
+  }).data?.id;
+  console.log("test$$$$$$$$$$$$$$$$$$$$");
+  console.log(assignUser);
   // const queryClient = useQueryClient();
   // const { mutateAsync: mutate2 } = api.team.insert.useMutation();
   const { mutateAsync: mutate1, isLoading } = api.task.insert.useMutation({
@@ -30,6 +35,16 @@ const Todo = () => {
     },
   });
   const { mutateAsync: mutate3 } = api.task.assignUser.useMutation({
+    onSuccess(input) {
+      void utils.task.getAll.invalidate();
+    },
+  });
+  const { mutateAsync: mutate4 } = api.userteam.addUser.useMutation({
+    onSuccess(input) {
+      void utils.task.getAll.invalidate();
+    },
+  });
+  const { mutateAsync: mutate5 } = api.userteam.updateUserTeam.useMutation({
     onSuccess(input) {
       void utils.task.getAll.invalidate();
     },
@@ -47,11 +62,33 @@ const Todo = () => {
     //   priority: "HIGH",
     //   // dueDate: new Date(),
     // });
-    void mutate3({
-      taskid: "cli62mpdk000tvj24lylqpsu3",
+    // void mutate3({
+    //   taskid: "cli62mpdk000tvj24lylqpsu3",
+
+    //   // isCompleted: false,
+    //   assignedTo: "cli41mcnj0000vjpgoi73so5a",
+    //   // teamId: "cli4rvecl0005vjx0mgf2plfd",
+    //   // priority: "HIGH",
+    //   // dueDate: new Date(),
+    // });
+    // void mutate4({
+    //   userId: assignUser,
+
+    //   // isCompleted: false,
+    //   teamId: "asdfasdgasdg",
+    //   // teamId: "cli4rvecl0005vjx0mgf2plfd",
+    //   // priority: "HIGH",
+    //   // dueDate: new Date(),
+    // });
+    void mutate5({
+      userId: assignUser,
 
       // isCompleted: false,
-      assignedTo: "cli41mcnj0000vjpgoi73so5a",
+      teamId: "asdfasdgasdg",
+
+      permissions: "ADMIN",
+      inviteAccepted: "ACCEPTED",
+
       // teamId: "cli4rvecl0005vjx0mgf2plfd",
       // priority: "HIGH",
       // dueDate: new Date(),
