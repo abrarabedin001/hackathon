@@ -20,42 +20,6 @@ export const teamRouter = createTRPCRouter({
       });
     }),
 
-  findUser: protectedProcedure
-    .input(
-      z.object({
-        email: z.string().optional(),
-        name: z.string().optional(),
-        teamId: z.string().optional(),
-      })
-    )
-    .query(({ ctx, input }) => {
-      return ctx.prisma.user.findFirst({
-        where: {
-          OR: [{ name: input.name }, { email: input.email }],
-        },
-      });
-    }),
-  addUser: protectedProcedure
-    .input(
-      z.object({
-        userId: z.string().optional(),
-        teamId: z.string().optional(),
-      })
-    )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.teamUser.create({
-        data: {
-          teamId: input.teamId,
-          // userId: input.userId,
-          userId: "cli41mcnj0000vjpgoi73so5a",
-
-          permissions: "VIEW",
-          inviteAccepted: "UNDECIDED",
-          user:
-        },
-      });
-    }),
-
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.team.findMany();
   }),
