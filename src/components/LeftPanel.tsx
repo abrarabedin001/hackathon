@@ -256,6 +256,39 @@ export default function LeftPanel({
             </form>
           </AccordionDetails>
         </Accordion>
+
+
+
+        <Accordion
+          sx={{ "&.Mui-expanded": { margin: 0, border: "1px solid" } }}
+        >
+          <AccordionSummary
+            expandIcon={<AddIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>Other </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <List>
+              {members?.map((member) => {
+                return (
+                  <ListItem key={member.userId} disablePadding>
+                    <ListItemButton>
+                      <ListItemAvatar>
+                        <Avatar
+                          alt={`Avatar n°${member}`}
+                          src={`/static/images/avatar/${member}.jpg`}
+                        />
+                      </ListItemAvatar>
+                      <ListItemText primary={`${member.user.name}`} />
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </AccordionDetails>
+        </Accordion>
       </Drawer>
     </>
   );
