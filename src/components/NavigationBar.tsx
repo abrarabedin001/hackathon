@@ -1,5 +1,6 @@
 import React from "react";
 import LeftPanel from "./LeftPanel";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 import {
   Box,
@@ -17,6 +18,8 @@ const drawerWidth = 240;
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 export default function NavigationBar() {
+  const { data: session } = useSession();
+
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -45,7 +48,7 @@ export default function NavigationBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="../public/codyrhodes.jpg" />
+                <Avatar alt="Remy Sharp" src={session?.user.image} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -64,11 +67,17 @@ export default function NavigationBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              {/* {settings.map((setting) => ( */}
+              <MenuItem
+                key="Profile"
+                onClick={() => {
+                  signOut();
+                }}
+              >
+                <Typography textAlign="center">Sign Out</Typography>
+              </MenuItem>
+
+              {/* ))} */}
             </Menu>
           </Box>
         </Toolbar>
