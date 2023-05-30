@@ -4,6 +4,7 @@ import { taskRouter } from "./routers/task";
 import { authRouter } from "./routers/auth";
 import { teamRouter } from "./routers/team";
 import { userTeamRouter } from "./routers/userteam";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   team: teamRouter,
   userteam: userTeamRouter,
+  user: userRouter,
 });
 // api.task.getall()
 // export type definition of API
