@@ -14,8 +14,8 @@ export const teamRouter = createTRPCRouter({
       const teamsList = await ctx.prisma.team.findMany({
         where: { creatorId: input.creatorid },
       });
-      
-      if (teamsList?.length >= 3) {
+
+      if (teamsList?.length > 3) {
         return new Response("No more teams can be created.");
       }
       const team = ctx.prisma.team.create({
@@ -27,12 +27,12 @@ export const teamRouter = createTRPCRouter({
       });
       return team;
     }),
-  getAllFromSameTeam: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx,input }) => {
+  getAllFromSameCreator: publicProcedure
+    .input(z.object({ creatorId: z.string() }))
+    .query(({ ctx, input }) => {
       return ctx.prisma.team.findMany({
         where: {
-          id: input.id,
+          creatorId: input.creatorId,
         },
       });
     }),
