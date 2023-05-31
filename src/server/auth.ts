@@ -83,8 +83,7 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
             },
           });
-          console.log("//////////////////||||||||||||||||||");
-          console.log(ifUser);
+        
           if (!ifUser) {
             const res = await prisma.user.create({
               data: {
@@ -92,7 +91,7 @@ export const authOptions: NextAuthOptions = {
                 name: user.email,
               },
             });
-            console.log(res);
+          
             buffer = res;
           } else {
             buffer = ifUser;

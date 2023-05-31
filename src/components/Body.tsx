@@ -3,7 +3,13 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { Box, Toolbar, Typography, TextField, Button } from "@mui/material";
 
-export default function Body({ tasks, addTasks, teamId }) {
+export default function Body({
+  tasks,
+  addTasks,
+  teamId,
+  deleteTeam,
+  changeTeamId,
+}) {
   const taskRef = useRef();
   const { data: session } = useSession();
   const handleSubmit = () => {
@@ -13,6 +19,8 @@ export default function Body({ tasks, addTasks, teamId }) {
       teamId: teamId,
     });
   };
+  console.log("tasks");
+  console.log(tasks);
 
   return (
     <>
@@ -26,19 +34,17 @@ export default function Body({ tasks, addTasks, teamId }) {
             display: "flex",
           }}
         >
-          {/* <TextField
-            id="outlined-basic"
-            label="To Do"
-            variant="outlined"
-            sx={{ width: 2.5 / 4, mr: "20px" }}
-            inputRef={taskRef}
-            onChange={(e) => {
-              console.log("change");
-              changeinptask(e.target.innerText);
-              console.log(inptask);
-              console.log(taskRef);
+          <Button
+            variant="contained"
+            size="medium"
+            sx={{ width: 0.5 / 6 }}
+            onClick={() => {
+              deleteTeam({ id: teamId });
+              changeTeamId("");
             }}
-          ></TextField> */}
+          >
+            Delete Team
+          </Button>
           <TextField
             id="outlined-basic3"
             label="To Do"
@@ -57,10 +63,10 @@ export default function Body({ tasks, addTasks, teamId }) {
             ADD
           </Button>
         </form>
+        {tasks?.map((el) => {
+          return <div className="text-white">{el.name}</div>;
+        })}
       </Box>
-      {tasks?.map((el) => {
-        <div>{tasks}</div>;
-      })}
     </>
   );
 }
