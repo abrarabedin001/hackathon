@@ -65,6 +65,33 @@ export const taskAssignRouter = createTRPCRouter({
         include: { user: true },
       });
     }),
+  updateAssignment: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        userId: z.string(),
+        taskId: z.string(),
+        permission: z.enum(["EDIT", "ADMIN", "VIEW"]),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.taskAssigned.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          permission: input.permission,
+          id: input.id,
+          task: {
+            connect: { id: input.taskId }, // Specify the team you want to connect
+          },
+
+          user: {
+            connect: { id: input.userId }, // Specify the team you want to connect
+          },
+        },
+      });
+    }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))

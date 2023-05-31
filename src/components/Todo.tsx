@@ -47,6 +47,12 @@ const Todo = ({
       void utils.taskassign.getFromSingleTask.invalidate();
     },
   });
+  const { mutateAsync: updateAssignment } =
+    api.taskassign.updateAssignment.useMutation({
+      onSuccess(input) {
+        void utils.taskassign.getFromSingleTask.invalidate();
+      },
+    });
 
   const { data: Members } = api.userteam.getAll.useQuery({
     teamId: teamId,
@@ -79,6 +85,11 @@ const Todo = ({
   });
 
   let AutoLabel = [{ label: "HIGH" }, { label: "MEDIUM" }, { label: "LOW" }];
+  let PermissionLabel = [
+    { label: "ADMIN" },
+    { label: "EDIT" },
+    { label: "VIEW" },
+  ];
   return (
     <>
       <Box className="m-3 flex-row  p-5 text-white">
@@ -171,8 +182,33 @@ const Todo = ({
           />
           {assigned?.map((el) => {
             return (
-              <Card className="m-2 p-2">
-                {el.user.email}{" "}
+              <Card className="m-2 flex p-2">
+                <Card className="mx-4">{el.user.email} </Card>
+
+                {/* <Autocomplete
+                  key={el.id}
+                  disablePortal
+                  id="combo-box-demo"
+                  options={PermissionLabel}
+                  sx={{ width: 180 }}
+                  onChange={(e) => {
+                    // updatePriority({
+                    //   id: el.id,
+                    //   priority: e.target.innerText,
+                    // });
+                    console.log("update permission");
+                    updateAssignment({
+                      id: el.id,
+                      permission: e.target.innerText,
+                      taskId: el.taskId,
+                      userId: el.userId,
+                    });
+                    // if(e.target.innerText?){ updateAssignment({id:el.id,permission:e.target.innerText})}
+                  }}
+                  renderInput={(params) => (
+                    <TextField key={el.id} {...params} label={el.priority} />
+                  )}
+                /> */}
                 <Button
                   onClick={() => {
                     deleteAssignment({ id: el.id });
