@@ -13,6 +13,8 @@ export default function Body({ tasks, addTasks, teamId }) {
       teamId: teamId,
     });
   };
+  console.log("tasks");
+  console.log(tasks);
 
   return (
     <>
@@ -26,19 +28,6 @@ export default function Body({ tasks, addTasks, teamId }) {
             display: "flex",
           }}
         >
-          {/* <TextField
-            id="outlined-basic"
-            label="To Do"
-            variant="outlined"
-            sx={{ width: 2.5 / 4, mr: "20px" }}
-            inputRef={taskRef}
-            onChange={(e) => {
-              console.log("change");
-              changeinptask(e.target.innerText);
-              console.log(inptask);
-              console.log(taskRef);
-            }}
-          ></TextField> */}
           <TextField
             id="outlined-basic3"
             label="To Do"
@@ -57,10 +46,10 @@ export default function Body({ tasks, addTasks, teamId }) {
             ADD
           </Button>
         </form>
+        {tasks?.map((el) => {
+          return <div className="text-white">{el.name}</div>;
+        })}
       </Box>
-      {tasks?.map((el) => {
-        <div>{tasks}</div>;
-      })}
     </>
   );
 }

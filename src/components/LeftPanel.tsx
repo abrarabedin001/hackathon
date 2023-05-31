@@ -65,15 +65,15 @@ export default function LeftPanel({
       return { label: "" };
     }
   });
-  console.log(emailList);
+ 
   if (nameList) {
     if (nameList) {
       AutoLabel = [...emailList, ...nameList];
     }
   }
-  console.log("members/////////////");
 
-  console.log(members);
+
+
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -85,7 +85,7 @@ export default function LeftPanel({
     const input = e.target.innerText;
     let id = null;
     let user = null;
-    console.log(input);
+
     if (input?.includes("@")) {
       user = users.filter((el) => {
         return el.email === input;
@@ -96,9 +96,9 @@ export default function LeftPanel({
       });
     }
     if (user) {
-      console.log(user[0].id);
+
       const id = user[0].id;
-      console.log(teamId);
+    
 
       addMembers({
         teamId: teamId,
@@ -108,9 +108,7 @@ export default function LeftPanel({
 
     // return user;
   }
-  function handleChange(e) {
-    console.log(e);
-  }
+ 
 
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
