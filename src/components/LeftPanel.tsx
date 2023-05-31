@@ -28,7 +28,6 @@ import { api } from "~/utils/api";
 
 const drawerWidth = 240;
 
-
 export default function LeftPanel({
   teams,
   submitcreateTeam,
@@ -37,6 +36,7 @@ export default function LeftPanel({
   users,
   members,
   addMembers,
+  otherTeams,
 }) {
   let memberName = useRef();
   let teamName = useRef();
@@ -242,11 +242,6 @@ export default function LeftPanel({
                 sx={{ width: 180 }}
                 onChange={(e) => {
                   handleSubmitMember(e);
-
-                  // console.log("autocomplete");
-                  // console.log(e.target.innerText);
-                  // console.log(e.target);
-                  // console.log(user);
                 }}
                 renderInput={(params) => (
                   <TextField {...params} label="UserName/Email" />
@@ -267,22 +262,20 @@ export default function LeftPanel({
             <Typography>Other Teams</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <List>
-              {members?.map((member) => {
-                return (
-                  <ListItem key={member.userId} disablePadding>
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={`Avatar n°${member}`}
-                          src={`/static/images/avatar/${member}.jpg`}
-                        />
-                      </ListItemAvatar>
-                      <ListItemText primary={`${member.user.name}`} />
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
+            <List disablePadding>
+              {otherTeams?.map((el, index) => (
+                <ListItem key={el.id} disablePadding>
+                  <ListItemButton
+                    selected={selectedIndex === index}
+                    onClick={() => handleListItemClick(index, el.id)}
+                  >
+                    <ListItemIcon>
+                      {index === 0 ? <PersonIcon /> : <GroupsIcon />}
+                    </ListItemIcon>
+                    <ListItemText primary={el.name} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
             </List>
           </AccordionDetails>
         </Accordion>
