@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import Card from "@mui/material/Card";
 import { signIn, signOut, useSession } from "next-auth/react";
-import dayjs from "dayjs";
+import Todo from "~/components/Todo";
 
 import {
   Box,
@@ -33,6 +33,9 @@ export default function Body({
   const taskRef = useRef();
   const updateRef = useRef();
   const { data: session } = useSession();
+
+
+
   const handleSubmit = () => {
     addTasks({
       name: taskRef?.current.value,
@@ -41,7 +44,6 @@ export default function Body({
     });
   };
 
-  let AutoLabel = [{ label: "HIGH" }, { label: "MEDIUM" }, { label: "LOW" }];
   console.log("tasks");
   console.log(tasks);
 
@@ -86,86 +88,15 @@ export default function Body({
         </Box>
         {tasks?.map((el) => {
           return (
-            <Box className="m-3 flex-row  p-5 text-white">
-              <Box className="flex-column m-3 border p-5 text-white">
-                <div className="m-4 flex">
-                  <Checkbox
-                    checked={el.isCompleted}
-                    onClick={(e) => {
-                      console.log("just clicked");
-                      updateCompleted({
-                        id: el.id,
-                        completed: !el.isCompleted,
-                      });
-                    }}
-                  />
-
-                  <TextField
-                    id="outlined-basic3"
-                    label={el.name}
-                    variant="outlined"
-                    sx={{ width: 2.5 / 4, mr: "20px" }}
-                    // placeholder={el.name}
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setTimeout(() => {
-                        updateTask({ id: el.id, name: e.target.value });
-                      }, 1000);
-                      // console.log(updateRef.current.value);
-                    }}
-                  />
-                  <Button
-                    variant="contained"
-                    size="medium"
-                    sx={{ width: 0.5 / 6 }}
-                    onClick={(e) => {
-                      deleteTask({ id: el.id });
-                    }}
-                  >
-                    X
-                  </Button>
-                </div>
-                <div className="m-4 flex">
-                  <Autocomplete
-                    key={el.id}
-                    disablePortal
-                    id="combo-box-demo"
-                    options={AutoLabel}
-                    sx={{ width: 180 }}
-                    onChange={(e) => {
-                      updatePriority({
-                        id: el.id,
-                        priority: e.target.innerText,
-                      });
-                    }}
-                    renderInput={(params) => (
-                      <TextField key={el.id} {...params} label={el.priority} />
-                    )}
-                  />
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker
-                      defaultValue={dayjs(el.DueDate)}
-                      onChange={(newValue) => {
-                        var date = new Date();
-                        date.toISOString(
-                          newValue["$y"],
-                          newValue["$M"],
-                          newValue["$D"]
-                        );
-                        updateDueDate({
-                          id: el.id,
-                          dueDate: date,
-                        });
-                      }}
-                    />
-                  </LocalizationProvider>
-                </div>
-              </Box>
-              <Box
-                id="right-panel"
-                className="flex-column m-3 border p-5 text-white"
-              ></Box>
-            </Box>
+            <Todo
+              el={el}
+              deleteTask={deleteTask}
+              updateDueDate={updateDueDate}
+              updateCompleted={updateCompleted}
+              updatePriority={updatePriority}
+              updateTask={updateTask}
+              teamId={teamId}
+            />
           );
         })}
       </Box>

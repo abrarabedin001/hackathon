@@ -25,8 +25,6 @@ export default function Tasks() {
   const { data: otherTeams } = api.userteam.getAllForSameUser.useQuery({
     userId: session?.user.id,
   });
-  console.log("Ohter teams");
-  console.log(otherTeams);
 
   const { mutateAsync: createTeam } = api.team.insert.useMutation({
     onSuccess(input) {
