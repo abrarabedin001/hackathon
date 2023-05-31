@@ -12,7 +12,7 @@ export const taskRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        
+
         name: z.string(),
         teamId: z.string().optional(),
         priority: z.enum(["HIGH", "MEDIUM", "LOW"]).optional(),
@@ -47,6 +47,71 @@ export const taskRouter = createTRPCRouter({
         },
       });
     }),
+  updatePriority: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+
+        priority: z.enum(["HIGH", "MEDIUM", "LOW"]).optional(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          priority: input.priority,
+        },
+      });
+    }),
+  updateDueDate: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        dueDate: z.date().optional(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          DueDate: input.dueDate,
+        },
+      });
+    }),
+  updateName: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().optional(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+    }),
+
+  updateCompleted: protectedProcedure
+    .input(z.object({ id: z.string(), completed: z.boolean() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.task.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isCompleted: input.completed,
+        },
+      });
+    }),
   assignUser: protectedProcedure
     .input(
       z.object({
@@ -57,36 +122,12 @@ export const taskRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.taskAssigned.create({
         data: {
-          userId:input.assignedTo,
-          taskId: input.taskid
+          userId: input.assignedTo,
+          taskId: input.taskid,
         },
       });
     }),
 
-  completed: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          isCompleted: true,
-        },
-      });
-    }),
-  unCompleted: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          isCompleted: false,
-        },
-      });
-    }),
   getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.task.findMany();
   }),
