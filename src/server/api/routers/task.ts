@@ -12,7 +12,7 @@ export const taskRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string(),
-        // isCompleted: z.boolean(),
+        
         name: z.string(),
         teamId: z.string().optional(),
         priority: z.enum(["HIGH", "MEDIUM", "LOW"]).optional(),
@@ -44,17 +44,6 @@ export const taskRouter = createTRPCRouter({
           name: input.name,
           DueDate: input.dueDate,
           isCompleted: input.isComplete,
-          // TaskAssigned: {
-          //   create: [
-          //     {
-          //       user: {
-          //         connect: {
-          //           id: input.assignedTo,
-          //         },
-          //       },
-          //     },
-          //   ],
-          // },
         },
       });
     }),

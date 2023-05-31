@@ -10,12 +10,29 @@ import {
 export const teamRouter = createTRPCRouter({
   insert: protectedProcedure
     .input(z.object({ name: z.string(), creatorid: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.team.create({
+    .mutation(async ({ ctx, input }) => {
+      const teamsList = await ctx.prisma.team.findMany({
+        where: { creatorId: input.creatorid },
+      });
+
+      if (teamsList?.length > 3) {
+        return new Response("No more teams can be created.");
+      }
+      const team = ctx.prisma.team.create({
         data: {
           name: input.name,
           creatorId: input.creatorid,
           noTeamMembers: 0,
+        },
+      });
+      return team;
+    }),
+  getAllFromSameCreator: publicProcedure
+    .input(z.object({ creatorId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.team.findMany({
+        where: {
+          creatorId: input.creatorId,
         },
       });
     }),
@@ -25,11 +42,11 @@ export const teamRouter = createTRPCRouter({
   }),
 
   delete: protectedProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.delete({
+      return ctx.prisma.team.delete({
         where: {
-          id: input.text,
+          id: input.id,
         },
       });
     }),

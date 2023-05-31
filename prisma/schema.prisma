@@ -63,7 +63,7 @@ model User {
   sessions      Session[]
   Todo          Task[]
   teams         Team[]
-  TeamUser      TeamUser[]
+  UserTeam      UserTeam[]
   TaskAssigned  TaskAssigned[]
 }
 
@@ -98,24 +98,36 @@ enum Priority {
 model Team {
   id            String @id @default(cuid())
   name          String
-  creator       User   @relation(fields: [creatorId], references: [id])
+  creator       User   @relation(fields: [creatorId], onDelete: Cascade,references: [id])
   creatorId     String
   noTeamMembers Int
   task Task[]
+  UserTeam UserTeam[]
 }
 
-model TeamUser {
-  id             String  @id @default(cuid())
-  user           User    @relation(fields: [userId], references: [id])
-  userId         String
-  permissions    String
-  inviteAccepted Boolean
+
+
+model UserTeam {
+  user User @relation(fields: [userId],onDelete: Cascade,references: [id])
+  userId String
+  team Team @relation(fields: [teamId],onDelete: Cascade,references: [id])
+  teamId String
+  permissions PERMISSIONS? @default(VIEW)
+  inviteAccepted DECISSIONS? @default(UNDECIDED)
+  @@id([teamId, userId])
+
 }
 
-enum Permissions {
+enum PERMISSIONS {
   ADMIN
   EDIT
   VIEW
+}
+
+enum DECISSIONS {
+  UNDECIDED
+  ACCEPTED
+  DENIED
 }
 
 model TaskAssigned {
