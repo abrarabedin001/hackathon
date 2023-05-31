@@ -3,7 +3,13 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { Box, Toolbar, Typography, TextField, Button } from "@mui/material";
 
-export default function Body({ tasks, addTasks, teamId }) {
+export default function Body({
+  tasks,
+  addTasks,
+  teamId,
+  deleteTeam,
+  changeTeamId,
+}) {
   const taskRef = useRef();
   const { data: session } = useSession();
   const handleSubmit = () => {
@@ -28,6 +34,17 @@ export default function Body({ tasks, addTasks, teamId }) {
             display: "flex",
           }}
         >
+          <Button
+            variant="contained"
+            size="medium"
+            sx={{ width: 0.5 / 6 }}
+            onClick={() => {
+              deleteTeam({ id: teamId });
+              changeTeamId("");
+            }}
+          >
+            Delete Team
+          </Button>
           <TextField
             id="outlined-basic3"
             label="To Do"
