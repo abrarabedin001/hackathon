@@ -48,10 +48,32 @@ export default function Tasks() {
       void utils.task.getFromSingleTeam.invalidate();
     },
   });
+  const { mutateAsync: updateDueDate } = api.task.updateDueDate.useMutation({
+    onSuccess(input) {
+      void utils.task.getFromSingleTeam.invalidate();
+    },
+  });
+  const { mutateAsync: updateCompleted } = api.task.updateCompleted.useMutation(
+    {
+      onSuccess(input) {
+        void utils.task.getFromSingleTeam.invalidate();
+      },
+    }
+  );
+  const { mutateAsync: updatePriority } = api.task.updatePriority.useMutation({
+    onSuccess(input) {
+      void utils.task.getFromSingleTeam.invalidate();
+    },
+  });
 
   const { mutateAsync: deleteTeam } = api.team.delete.useMutation({
     onSuccess(input) {
       void utils.team.getAllFromSameCreator.invalidate();
+    },
+  });
+  const { mutateAsync: deleteTask } = api.task.delete.useMutation({
+    onSuccess(input) {
+      void utils.task.getFromSingleTeam.invalidate();
     },
   });
 
@@ -81,6 +103,10 @@ export default function Tasks() {
             teamId={teamId}
             deleteTeam={deleteTeam}
             changeTeamId={changeTeamId}
+            deleteTask={deleteTask}
+            updateDueDate={updateDueDate}
+            updateCompleted={updateCompleted}
+            updatePriority={updatePriority}
           />
         ) : (
           ""
