@@ -117,6 +117,7 @@ export const userTeamRouter = createTRPCRouter({
         },
         include: {
           user: true,
+          team: true,
         },
       });
     }),
@@ -129,6 +130,7 @@ export const userTeamRouter = createTRPCRouter({
         },
         include: {
           user: true,
+          team: true,
         },
       });
     }),

@@ -37,6 +37,7 @@ export default function LeftPanel({
   members,
   addMembers,
   otherTeams,
+  deleteTeam,
 }) {
   let memberName = useRef();
   let teamName = useRef();
@@ -65,15 +66,12 @@ export default function LeftPanel({
       return { label: "" };
     }
   });
-  console.log(emailList);
+
   if (nameList) {
     if (nameList) {
       AutoLabel = [...emailList, ...nameList];
     }
   }
-  console.log("members/////////////");
-
-  console.log(members);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -85,7 +83,7 @@ export default function LeftPanel({
     const input = e.target.innerText;
     let id = null;
     let user = null;
-    console.log(input);
+
     if (input?.includes("@")) {
       user = users.filter((el) => {
         return el.email === input;
@@ -96,9 +94,7 @@ export default function LeftPanel({
       });
     }
     if (user) {
-      console.log(user[0].id);
       const id = user[0].id;
-      console.log(teamId);
 
       addMembers({
         teamId: teamId,
@@ -108,15 +104,17 @@ export default function LeftPanel({
 
     // return user;
   }
-  function handleChange(e) {
-    console.log(e);
-  }
 
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const handleListItemClick = (index: number, id: string) => {
     setSelectedIndex(index);
     changeTeamId(id);
+  };
+
+  const deleteTeamComp = (id: string) => {
+    console.log("dlete");
+    // deleteTeam({ id: id });
   };
 
   return (
@@ -229,12 +227,6 @@ export default function LeftPanel({
                 alignItems: "center",
               }}
             >
-              {/* <TextField
-                id="outlined-basic"
-                label="Add Member"
-                variant="outlined"
-                placeholder="Username"
-              /> */}
               <Autocomplete
                 disablePortal
                 id="combo-box-demo"
@@ -272,7 +264,7 @@ export default function LeftPanel({
                     <ListItemIcon>
                       {index === 0 ? <PersonIcon /> : <GroupsIcon />}
                     </ListItemIcon>
-                    <ListItemText primary={el.name} />
+                    <ListItemText primary={el.team.name} />
                   </ListItemButton>
                 </ListItem>
               ))}

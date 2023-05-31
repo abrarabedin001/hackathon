@@ -25,7 +25,7 @@ export default function Tasks() {
   const { data: otherTeams } = api.userteam.getAllForSameUser.useQuery({
     userId: session?.user.id,
   });
-  console.log("other teams");
+  console.log("Ohter teams");
   console.log(otherTeams);
 
   const { mutateAsync: createTeam } = api.team.insert.useMutation({
@@ -40,17 +40,22 @@ export default function Tasks() {
   });
 
   const { data: Tasks } = api.task.getFromSingleTeam.useQuery({
-    teamId: teamId,
+    teamid: teamId,
   });
+
   const { mutateAsync: addTasks } = api.task.insert.useMutation({
     onSuccess(input) {
-      // void utils.userteam.getAll.invalidate();
+      void utils.task.getFromSingleTeam.invalidate();
+    },
+  });
+
+  const { mutateAsync: deleteTeam } = api.team.delete.useMutation({
+    onSuccess(input) {
+      void utils.team.getAllFromSameCreator.invalidate();
     },
   });
 
   const submitcreateTeam = (teamName) => {
-    console.log("in submitcreateTeam");
-    console.log(teamName);
     void createTeam({ name: teamName, creatorid: session.user.id });
   };
 
@@ -70,7 +75,13 @@ export default function Tasks() {
           otherTeams={otherTeams}
         />
         {teamId != "" ? (
-          <Body tasks={Tasks} addTasks={addTasks} teamId={teamId} />
+          <Body
+            tasks={Tasks}
+            addTasks={addTasks}
+            teamId={teamId}
+            deleteTeam={deleteTeam}
+            changeTeamId={changeTeamId}
+          />
         ) : (
           ""
         )}

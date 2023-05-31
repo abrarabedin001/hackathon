@@ -15,8 +15,6 @@ const Todo = () => {
   const utils = api.useContext();
 
   const { data: session } = useSession();
-  console.log("///////////////////////");
-  console.log(session);
 
   const ref = useRef<HTMLInputElement>(null);
   const [sentence, setSentence] = useState("");
@@ -27,8 +25,7 @@ const Todo = () => {
   const assignUser = api.userteam.findUser.useQuery({
     email: "ahmad.abrar.abedin@g.bracu.ac.bd",
   }).data?.id;
-  console.log("test$$$$$$$$$$$$$$$$$$$$");
-  console.log(assignUser);
+
   // const queryClient = useQueryClient();
   const { mutateAsync: mutate2 } = api.team.insert.useMutation();
   const { mutateAsync: mutate1, isLoading } = api.task.insert.useMutation({
@@ -58,8 +55,6 @@ const Todo = () => {
   // });
 
   const sendData = () => {
-    console.log("showing value of use Ref:");
-    console.log(ref.current?.value);
     void mutate2({ name: "testLimit", creatorid: session?.user.id });
     // void mutate1({
     //   userId: session?.user.id,
@@ -130,7 +125,6 @@ const Todo = () => {
               onClick={() => {
                 document.getElementById(el.id).style.textDecoration =
                   "line-through";
-                console.log();
               }}
             ></input>
             {el.name}

@@ -15,7 +15,7 @@ export const teamRouter = createTRPCRouter({
         where: { creatorId: input.creatorid },
       });
 
-      if (teamsList?.length > 3) {
+      if (teamsList?.length > 2) {
         return new Response("No more teams can be created.");
       }
       const team = ctx.prisma.team.create({
