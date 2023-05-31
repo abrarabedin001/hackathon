@@ -71,6 +71,7 @@ const AuthShowcase: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       {sessionData && <Link href="/todo"> Todo App</Link>}
+      {sessionData && <Link href="/tasks"> Task App</Link>}
 
       <p className="text-center text-2xl text-white">
         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}

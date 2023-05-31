@@ -120,6 +120,18 @@ export const userTeamRouter = createTRPCRouter({
         },
       });
     }),
+  getAllForSameUser: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.userTeam.findMany({
+        where: {
+          userId: input.userId,
+        },
+        include: {
+          user: true,
+        },
+      });
+    }),
 
   delete: protectedProcedure
     .input(z.object({ text: z.string() }))

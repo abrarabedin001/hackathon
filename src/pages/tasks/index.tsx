@@ -18,21 +18,15 @@ export default function Tasks() {
   const { data: Users } = api.user.getAll.useQuery({
     creatorId: session?.user.id,
   });
-  // let Members = [];
 
   const { data: Members } = api.userteam.getAll.useQuery({
     teamId: teamId,
   });
-  // if (teamId != "") {
-  //   console.log("TEAMID");
-  //   console.log(teamId);
-  //   const { data: Members } = api.userteam.getAll.useQuery({
-  //     teamId: teamId,
-  //   });
-  //   console.log("members have been found");
-  //   console.log(Members);
-  //   // Members = ["zcf", "sdf"];
-  // }
+  const { data: otherTeams } = api.userteam.getAllForSameUser.useQuery({
+    userId: session?.user.id,
+  });
+  console.log("other teams");
+  console.log(otherTeams);
 
   const { mutateAsync: createTeam } = api.team.insert.useMutation({
     onSuccess(input) {
@@ -41,7 +35,16 @@ export default function Tasks() {
   });
   const { mutateAsync: addMembers } = api.userteam.addUser.useMutation({
     onSuccess(input) {
-      void utils.team.getAllFromSameCreator.invalidate();
+      void utils.userteam.getAll.invalidate();
+    },
+  });
+
+  const { data: Tasks } = api.task.getFromSingleTeam.useQuery({
+    teamId: teamId,
+  });
+  const { mutateAsync: addTasks } = api.task.insert.useMutation({
+    onSuccess(input) {
+      // void utils.userteam.getAll.invalidate();
     },
   });
 
@@ -64,8 +67,13 @@ export default function Tasks() {
           users={Users}
           members={teamId === "" ? [] : Members}
           addMembers={addMembers}
+          otherTeams={otherTeams}
         />
-        <Body />
+        {teamId != "" ? (
+          <Body tasks={Tasks} addTasks={addTasks} teamId={teamId} />
+        ) : (
+          ""
+        )}
       </Box>
     </>
   );
