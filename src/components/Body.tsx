@@ -100,13 +100,13 @@ export default function Body({
                     });
                   }}
                 />
-                {/* <Card variant="outlined" className="p-3 ">
-                  {el.name}
-                </Card> */}
+
                 <TextField
                   id="outlined-basic3"
+                  label={el.name}
                   variant="outlined"
                   sx={{ width: 2.5 / 4, mr: "20px" }}
+                  // placeholder={el.name}
                   onChange={(e) => {
                     console.log(e.target.value);
                     setTimeout(() => {
@@ -126,7 +126,7 @@ export default function Body({
                   X
                 </Button>
               </div>
-              <div className="m-4 flex ">
+              <div className="m-4 flex">
                 <Autocomplete
                   key={el.id}
                   disablePortal
