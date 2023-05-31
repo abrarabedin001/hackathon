@@ -257,8 +257,6 @@ export default function LeftPanel({
           </AccordionDetails>
         </Accordion>
 
-
-
         <Accordion
           sx={{ "&.Mui-expanded": { margin: 0, border: "1px solid" } }}
         >
@@ -267,7 +265,7 @@ export default function LeftPanel({
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography>Other </Typography>
+            <Typography>Other Teams</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <List>
