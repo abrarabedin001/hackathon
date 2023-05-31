@@ -25,10 +25,9 @@ import {
   Avatar,
 } from "@mui/material";
 import { api } from "~/utils/api";
-import { Session } from "inspector";
+
 const drawerWidth = 240;
-// const tabs = ["Personal", "Team 1", "Team 2", "Team 3"];
-// const members = ["Member 1", "Member 2", "Member 3", "Member 4", "Member 5"];
+
 
 export default function LeftPanel({
   teams,
