@@ -10,6 +10,7 @@ import {
   TextField,
   Button,
   Checkbox,
+  Card,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
@@ -41,6 +42,11 @@ const Todo = ({
       void utils.taskassign.getFromSingleTask.invalidate();
     },
   });
+  const { mutateAsync: deleteAssignment } = api.taskassign.delete.useMutation({
+    onSuccess(input) {
+      void utils.taskassign.getFromSingleTask.invalidate();
+    },
+  });
 
   const { data: Members } = api.userteam.getAll.useQuery({
     teamId: teamId,
@@ -63,7 +69,7 @@ const Todo = ({
 
   // return user;
 
-  const top100Films = Members?.map((el) => {
+  const assignPeople = Members?.map((el) => {
     return {
       label: el.user.email,
       email: el.user.email,
@@ -71,8 +77,7 @@ const Todo = ({
       id: el.user.id,
     };
   });
-  console.log("top100Films");
-  console.log(top100Films);
+
   let AutoLabel = [{ label: "HIGH" }, { label: "MEDIUM" }, { label: "LOW" }];
   return (
     <>
@@ -155,19 +160,28 @@ const Todo = ({
           <Autocomplete
             disablePortal
             id="combo-box-demo"
-            options={top100Films}
+            options={assignPeople}
             sx={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Movie" />}
             onChange={(e) => {
-              // console.log("onChange");
-              // handleSubmitMember(e);
               if (e.target.innerText) {
                 handleSubmitAssign(e);
               }
             }}
           />
           {assigned?.map((el) => {
-            return <dev>{el.user.email}</dev>;
+            return (
+              <Card className="m-2 p-2">
+                {el.user.email}{" "}
+                <Button
+                  onClick={() => {
+                    deleteAssignment({ id: el.id });
+                  }}
+                >
+                  X
+                </Button>
+              </Card>
+            );
           })}
         </Box>
       </Box>
