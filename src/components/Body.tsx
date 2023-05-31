@@ -28,8 +28,10 @@ export default function Body({
   updateDueDate,
   updateCompleted,
   updatePriority,
+  updateTask,
 }) {
   const taskRef = useRef();
+  const updateRef = useRef();
   const { data: session } = useSession();
   const handleSubmit = () => {
     addTasks({
@@ -87,13 +89,9 @@ export default function Body({
         {tasks?.map((el) => {
           return (
             <Box className="flex-column m-3 border p-5 text-white">
-              <div className="flex">
+              <div className="m-4 flex">
                 <Checkbox
                   checked={el.isCompleted}
-                  // onChange={updateCompleted({
-                  //   id: el.id,
-                  //   isCompleted: !el.isCompleted,
-                  // })}
                   onClick={(e) => {
                     console.log("just clicked");
                     updateCompleted({
@@ -102,10 +100,21 @@ export default function Body({
                     });
                   }}
                 />
-                <Card variant="outlined" className="p-3 ">
+                {/* <Card variant="outlined" className="p-3 ">
                   {el.name}
-                </Card>
-
+                </Card> */}
+                <TextField
+                  id="outlined-basic3"
+                  variant="outlined"
+                  sx={{ width: 2.5 / 4, mr: "20px" }}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setTimeout(() => {
+                      updateTask({ id: el.id, name: e.target.value });
+                    }, 1000);
+                    // console.log(updateRef.current.value);
+                  }}
+                />
                 <Button
                   variant="contained"
                   size="medium"
@@ -117,7 +126,7 @@ export default function Body({
                   X
                 </Button>
               </div>
-              <div className="flex">
+              <div className="m-4 flex ">
                 <Autocomplete
                   key={el.id}
                   disablePortal

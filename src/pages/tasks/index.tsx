@@ -48,6 +48,11 @@ export default function Tasks() {
       void utils.task.getFromSingleTeam.invalidate();
     },
   });
+  const { mutateAsync: updateTask } = api.task.updateName.useMutation({
+    onSuccess(input) {
+      void utils.task.getFromSingleTeam.invalidate();
+    },
+  });
   const { mutateAsync: updateDueDate } = api.task.updateDueDate.useMutation({
     onSuccess(input) {
       void utils.task.getFromSingleTeam.invalidate();
@@ -107,6 +112,7 @@ export default function Tasks() {
             updateDueDate={updateDueDate}
             updateCompleted={updateCompleted}
             updatePriority={updatePriority}
+            updateTask={updateTask}
           />
         ) : (
           ""
