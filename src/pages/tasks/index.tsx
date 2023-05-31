@@ -113,6 +113,7 @@ export default function Tasks() {
             updateCompleted={updateCompleted}
             updatePriority={updatePriority}
             updateTask={updateTask}
+            members={teamId === "" ? [] : Members}
           />
         ) : (
           ""
