@@ -97,7 +97,8 @@ const Todo = ({
       id: el.user.id,
     };
   });
-
+  console.log("el//////////////////////////");
+  // console.log(el?.dueDate.toISOString);
   let AutoLabel = [{ label: "HIGH" }, { label: "MEDIUM" }, { label: "LOW" }];
   let PermissionLabel = [
     { label: "ADMIN" },
@@ -161,39 +162,82 @@ const Todo = ({
             )}
           </div>
           <div className="m-4 flex">
-            <Autocomplete
-              key={el.id}
-              disablePortal
-              id="combo-box-demo"
-              options={AutoLabel}
-              sx={{ width: 180 }}
-              onChange={(e) => {
-                updatePriority({
-                  id: el.id,
-                  priority: e.target.innerText,
-                });
-              }}
-              renderInput={(params) => (
-                <TextField key={el.id} {...params} label={el.priority} />
-              )}
-            />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                // defaultValue={dayjs(el.DueDate)}
-                onChange={(newValue) => {
-                  const date = new Date();
-                  date.toISOString(
-                    newValue["$y"],
-                    newValue["$M"],
-                    newValue["$D"]
-                  );
-                  updateDueDate({
+            {permission != "VIEW" ? (
+              <Autocomplete
+                key={el.id}
+                disablePortal
+                id="combo-box-demo"
+                options={AutoLabel}
+                sx={{ width: 180 }}
+                onChange={(e) => {
+                  updatePriority({
                     id: el.id,
-                    dueDate: date,
+                    priority: e.target.innerText,
                   });
                 }}
+                renderInput={(params) => (
+                  <TextField key={el.id} {...params} label={el.priority} />
+                )}
               />
-            </LocalizationProvider>
+            ) : (
+              <Autocomplete
+                key={el.id}
+                disablePortal
+                id="disabled"
+                options={AutoLabel}
+                sx={{ width: 180 }}
+                disabled
+                // onChange={(e) => {
+                //   updatePriority({
+                //     id: el.id,
+                //     priority: e.target.innerText,
+                //   });
+                // }}
+                renderInput={(params) => (
+                  <TextField key={el.id} {...params} label={el.priority} />
+                )}
+              />
+              // <p className="m-5 border p-5">PRIORITY: {el.priority}</p>
+            )}
+            {permission != "VIEW" ? (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={dayjs(el.DueDate)}
+                  onChange={(newValue) => {
+                    const date = new Date(
+                      newValue["$y"],
+                      newValue["$M"],
+                      newValue["$D"]
+                    );
+                    date.toISOString();
+                    updateDueDate({
+                      id: el.id,
+                      dueDate: date,
+                    });
+                  }}
+                />
+              </LocalizationProvider>
+            ) : (
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={dayjs(el.DueDate)}
+                  disabled
+                  // onChange={(newValue) => {
+                  //   const date = new Date(
+                  //     newValue["$y"],
+                  //     newValue["$M"],
+                  //     newValue["$D"]
+                  //   );
+                  //   date.toISOString();
+                  //   updateDueDate({
+                  //     id: el.id,
+                  //     dueDate: date,
+                  //   });
+                  // }}
+                />
+              </LocalizationProvider>
+              // <p className="m-5 border p-5">DUE DATE: {el.DueDate.}</p>
+            )}
           </div>
         </Box>
         <Box id="right-panel" className="flex-column m-3 border p-5 text-white">
