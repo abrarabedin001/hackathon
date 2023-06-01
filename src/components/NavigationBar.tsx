@@ -71,7 +71,7 @@ export default function NavigationBar() {
               <MenuItem
                 key="Profile"
                 onClick={() => {
-                  signOut();
+                  signOut({ callbackUrl: "http://localhost:3000/" });
                 }}
               >
                 <Typography textAlign="center">Sign Out</Typography>

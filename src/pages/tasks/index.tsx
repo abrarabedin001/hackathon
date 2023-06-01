@@ -22,6 +22,24 @@ export default function Tasks() {
   const { data: Members } = api.userteam.getAll.useQuery({
     teamId: teamId,
   });
+
+  const { mutateAsync: updatePermission } =
+    api.userteam.updatePermission.useMutation({
+      onSuccess(input) {
+        void utils.userteam.getAll.invalidate();
+      },
+    });
+  // updatePermission
+  const { data: otherTeams } = api.userteam.getAllForSameUser.useQuery({
+    userId: session?.user.id,
+  });
+
+  const { mutateAsync: decideUserTeam } =
+    api.userteam.decideUserTeam.useMutation({
+      onSuccess(input) {
+        void utils.userteam.getAllForSameUser.invalidate();
+      },
+    });
   const { mutateAsync: deleteMemberFromTeam } = api.userteam.delete.useMutation(
     {
       onSuccess(input) {
@@ -29,17 +47,6 @@ export default function Tasks() {
       },
     }
   );
-  const { mutateAsync: updatePermission } = api.userteam.updatePermission.useMutation(
-    {
-      onSuccess(input) {
-        void utils.userteam.getAll.invalidate();
-      },
-    }
-  );
-  // updatePermission
-  const { data: otherTeams } = api.userteam.getAllForSameUser.useQuery({
-    userId: session?.user.id,
-  });
 
   const { mutateAsync: createTeam } = api.team.insert.useMutation({
     onSuccess(input) {
@@ -113,6 +120,8 @@ export default function Tasks() {
           members={teamId === "" ? [] : Members}
           addMembers={addMembers}
           otherTeams={otherTeams}
+          decideUserTeam={decideUserTeam}
+          deleteMemberFromTeam={deleteMemberFromTeam}
         />
         {teamId != "" ? (
           <Body
