@@ -38,6 +38,8 @@ export default function LeftPanel({
   addMembers,
   otherTeams,
   decideUserTeam,
+  personal,
+  setPersonal,
 }) {
   let memberName = useRef();
   let teamName = useRef();
@@ -110,6 +112,7 @@ export default function LeftPanel({
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const handleListItemClick = (index: number, id: string) => {
+    setPersonal(false);
     setSelectedIndex(index);
     changeTeamId(id);
   };
@@ -137,6 +140,17 @@ export default function LeftPanel({
         <Divider />
 
         <List disablePadding>
+          <ListItem key="personal" disablePadding>
+            <ListItemButton
+              // selected={selectedIndex === index}
+              onClick={() => setPersonal(true)}
+            >
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Personal"} />
+            </ListItemButton>
+          </ListItem>
           {teams?.map((el, index) => (
             <ListItem key={el.id} disablePadding>
               <ListItemButton

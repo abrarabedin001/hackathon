@@ -169,30 +169,32 @@ export default function Body({
             ) : (
               ""
             )}
+            
           </div>
           {permission != "VIEW" ? (
-            <div className="m-6">
-              <TextField
-                id="outlined-basic3"
-                label="To Do"
-                variant="outlined"
-                sx={{ width: 2.5 / 4, mr: "20px" }}
-                inputRef={taskRef}
-              />
-              <Button
-                variant="contained"
-                size="medium"
-                sx={{ width: 0.5 / 6 }}
-                onClick={() => {
-                  handleSubmit();
-                }}
-              >
-                ADD
-              </Button>
-            </div>
-          ) : (
-            ""
-          )}
+              <div className="m-6">
+            <TextField
+              id="outlined-basic3"
+              label="To Do"
+              variant="outlined"
+              sx={{ width: 2.5 / 4, mr: "20px" }}
+              inputRef={taskRef}
+            />
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{ width: 0.5 / 6 }}
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              ADD
+            </Button>
+          </div>
+              ) : (
+                ""
+              )}
+          
         </Box>
         {tasks?.map((el) => {
           return (
