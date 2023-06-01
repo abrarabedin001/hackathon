@@ -43,17 +43,14 @@ const Todo = ({
   updateTask,
   teamId,
   members,
+  permission,
 }) => {
   const utils = api.useContext();
   const { data: session } = useSession();
-  
 
   const { data: assigned } = api.taskassign.getFromSingleTask.useQuery({
     taskid: el.id,
   });
-  console.log("Task Assigned");
-  console.log(assigned);
-
   const { mutateAsync: assignTask } = api.taskassign.assignUser.useMutation({
     onSuccess(input) {
       void utils.taskassign.getFromSingleTask.invalidate();
@@ -112,41 +109,56 @@ const Todo = ({
       <Box className="m-3 flex-row  p-5 text-white">
         <Box className="flex-column m-3 border p-5 text-white">
           <div className="m-4 flex">
-            <Checkbox
-              checked={el.isCompleted}
-              onClick={(e) => {
-                console.log("just clicked");
-                updateCompleted({
-                  id: el.id,
-                  completed: !el.isCompleted,
-                });
-              }}
-            />
-
-            <TextField
-              id="outlined-basic3"
-              label={el.name}
-              variant="outlined"
-              sx={{ width: 2.5 / 4, mr: "20px" }}
-              // placeholder={el.name}
-              onChange={(e) => {
-                console.log(e.target.value);
-                setTimeout(() => {
-                  updateTask({ id: el.id, name: e.target.value });
-                }, 1000);
-                // console.log(updateRef.current.value);
-              }}
-            />
-            <Button
-              variant="contained"
-              size="medium"
-              sx={{ width: 0.5 / 6 }}
-              onClick={(e) => {
-                deleteTask({ id: el.id });
-              }}
-            >
-              X
-            </Button>
+            {permission != "VIEW" ? (
+              <Checkbox
+                checked={el.isCompleted}
+                onClick={(e) => {
+                  console.log("just clicked");
+                  updateCompleted({
+                    id: el.id,
+                    completed: !el.isCompleted,
+                  });
+                }}
+              />
+            ) : (
+              <Checkbox checked={el.isCompleted} />
+            )}
+            {permission != "VIEW" ? (
+              <TextField
+                id="outlined-basic3"
+                label={el.name}
+                variant="outlined"
+                sx={{ width: 2.5 / 4, mr: "20px" }}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setTimeout(() => {
+                    updateTask({ id: el.id, name: e.target.value });
+                  }, 1000);
+                }}
+              />
+            ) : (
+              <TextField
+                id="outlined-basic3"
+                // label={el.name}
+                value={el.name}
+                variant="outlined"
+                sx={{ width: 2.5 / 4, mr: "20px" }}
+              />
+            )}
+            {permission != "VIEW" ? (
+              <Button
+                variant="contained"
+                size="medium"
+                sx={{ width: 0.5 / 6 }}
+                onClick={(e) => {
+                  deleteTask({ id: el.id });
+                }}
+              >
+                X
+              </Button>
+            ) : (
+              ""
+            )}
           </div>
           <div className="m-4 flex">
             <Autocomplete
@@ -167,9 +179,9 @@ const Todo = ({
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                defaultValue={dayjs(el.DueDate)}
+                // defaultValue={dayjs(el.DueDate)}
                 onChange={(newValue) => {
-                  var date = new Date();
+                  const date = new Date();
                   date.toISOString(
                     newValue["$y"],
                     newValue["$M"],
@@ -185,59 +197,42 @@ const Todo = ({
           </div>
         </Box>
         <Box id="right-panel" className="flex-column m-3 border p-5 text-white">
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={assignPeople}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Movie" />}
-            onChange={(e) => {
-              if (e.target.innerText) {
-                handleSubmitAssign(e);
-              }
-            }}
-          />
+          ASSIGNED TO:
+          {permission === "ADMIN" ? (
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={assignPeople}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="Movie" />}
+              onChange={(e) => {
+                if (e.target.innerText) {
+                  handleSubmitAssign(e);
+                }
+              }}
+            />
+          ) : (
+            " "
+          )}
           {assigned?.map((el) => {
             return (
               <Card className="m-2 flex p-2">
                 <Card className="mx-4">{el.user.email} </Card>
-
-                {/* <Autocomplete
-                  key={el.id}
-                  disablePortal
-                  id="combo-box-demo"
-                  options={PermissionLabel}
-                  sx={{ width: 180 }}
-                  onChange={(e) => {
-                    // updatePriority({
-                    //   id: el.id,
-                    //   priority: e.target.innerText,
-                    // });
-                    console.log("update permission");
-                    updateAssignment({
-                      id: el.id,
-                      permission: e.target.innerText,
-                      taskId: el.taskId,
-                      userId: el.userId,
-                    });
-                    // if(e.target.innerText?){ updateAssignment({id:el.id,permission:e.target.innerText})}
-                  }}
-                  renderInput={(params) => (
-                    <TextField key={el.id} {...params} label={el.priority} />
-                  )}
-                /> */}
-                <Button
-                  onClick={() => {
-                    deleteAssignment({ id: el.id });
-                  }}
-                >
-                  X
-                </Button>
+                {permission === "ADMIN" ? (
+                  <Button
+                    onClick={() => {
+                      deleteAssignment({ id: el.id });
+                    }}
+                  >
+                    X
+                  </Button>
+                ) : (
+                  " "
+                )}
               </Card>
             );
           })}
         </Box>
-        
       </Box>
     </>
   );

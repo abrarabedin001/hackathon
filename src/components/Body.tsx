@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Card from "@mui/material/Card";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Todo from "~/components/Todo";
@@ -51,6 +51,7 @@ export default function Body({
 }) {
   const taskRef = useRef();
   const updateRef = useRef();
+  const [permission, setPermission] = useState("VIEW");
   const { data: session } = useSession();
   let AutoLabel = [{ label: "EDIT" }, { label: "ADMIN" }, { label: "VIEW" }];
 
@@ -62,8 +63,18 @@ export default function Body({
     });
   };
 
-  console.log("MEMBERS/////////////////////////////");
-  console.log(members);
+  let me = members?.filter((el) => el.userId === session?.user.id)[0];
+  useEffect(() => {
+    let me = members?.filter((el) => el.userId === session?.user.id)[0];
+    console.log(me);
+    if (me?.userId === me?.team.creatorId) {
+      setPermission("ADMIN");
+    } else {
+      setPermission(me?.permissions);
+    }
+  }, [tasks]);
+  console.log("PERMISSIONS  ------------------------");
+  console.log(permission);
 
   return (
     <>
@@ -74,116 +85,114 @@ export default function Body({
         <Toolbar />
         <Box className="flex-column">
           <div className="flex">
-            <Button
-              variant="contained"
-              size="medium"
-              sx={{ width: 0.5 / 6 }}
-              onClick={() => {
-                deleteTeam({ id: teamId });
-                changeTeamId("");
-              }}
-            >
-              Delete Team
-            </Button>
-            <Accordion
-              sx={{ "&.Mui-expanded": { margin: 0, border: "1px solid" } }}
-            >
-              <AccordionSummary
-                expandIcon={<AddIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
+            {me?.userId === me?.team.creatorId ? (
+              <Button
+                variant="contained"
+                size="medium"
+                sx={{ width: 0.5 / 6 }}
+                onClick={() => {
+                  deleteTeam({ id: teamId });
+                  changeTeamId("");
+                }}
               >
-                <Typography>Members</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <List>
-                  {members?.map((member) => {
-                    return (
-                      <ListItem key={member.userId} disablePadding>
-                        <ListItemButton>
-                          <ListItemAvatar>
-                            <Avatar
-                              alt={`Avatar n°${member}`}
-                              src={`/static/images/avatar/${member}.jpg`}
-                            />
-                          </ListItemAvatar>
-                          <ListItemText primary={`${member.user.name}`} />
-                        </ListItemButton>
-                        <ListItemButton
-                          onClick={(e) => {
-                            console.log("zzzzzzz");
-                            deleteMemberFromTeam({
-                              userId: member.user.id,
-                              teamId: teamId,
-                            });
-                          }}
-                        >
-                          X
-                        </ListItemButton>
-                        <Autocomplete
-                          key={member.userId}
-                          disablePortal
-                          id="combo-box-demo"
-                          options={AutoLabel}
-                          sx={{ width: 180 }}
-                          // onChange={(e) => {
-                          //   (e.target.innerText){
-                          //     updatePermission({
-                          //       userId: member.userId,
-                          //       teamId: member.teamId,
-                          //       permission: e.target.innerText,
-                          //     });
-                          //   }
-                          onChange={(e) => {
-                            console.log("hell//////////////////////");
-                            if (e.target.innerText) {
-                              // console.log("ki hoise");
-                              // console.log(e.target.innerText);
-                              // console.log(e.target);
-                              updatePermission({
-                                userId: member.userId,
-                                teamId: member.teamId,
-
-                                permissions: e.target.innerText,
+                Delete Team
+              </Button>
+            ) : (
+              ""
+            )}
+            {permission != "VIEW" ? (
+              <Accordion
+                sx={{ "&.Mui-expanded": { margin: 0, border: "1px solid" } }}
+              >
+                <AccordionSummary
+                  expandIcon={<AddIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Members</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <List>
+                    {members?.map((member) => {
+                      return (
+                        <ListItem key={member.userId} disablePadding>
+                          <ListItemButton>
+                            <ListItemAvatar>
+                              <Avatar
+                                alt={`Avatar n°${member}`}
+                                src={`/static/images/avatar/${member}.jpg`}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText primary={`${member.user.name}`} />
+                          </ListItemButton>
+                          <ListItemButton
+                            onClick={(e) => {
+                              console.log("zzzzzzz");
+                              deleteMemberFromTeam({
+                                userId: member.user.id,
+                                teamId: teamId,
                               });
-                            }
-                          }}
-                          // }}
-                          renderInput={(params) => (
-                            <TextField
-                              key={member.userId}
-                              {...params}
-                              label={member.permissions}
-                            />
-                          )}
-                        />
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              </AccordionDetails>
-            </Accordion>
+                            }}
+                          >
+                            X
+                          </ListItemButton>
+                          <Autocomplete
+                            key={member.userId}
+                            disablePortal
+                            id="combo-box-demo"
+                            options={AutoLabel}
+                            sx={{ width: 180 }}
+                            onChange={(e) => {
+                              if (e.target.innerText) {
+                                updatePermission({
+                                  userId: member.userId,
+                                  teamId: member.teamId,
+                                  permissions: e.target.innerText,
+                                });
+                              }
+                            }}
+                            // }}
+                            renderInput={(params) => (
+                              <TextField
+                                key={member.userId}
+                                {...params}
+                                label={member.permissions}
+                              />
+                            )}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
+            ) : (
+              ""
+            )}
           </div>
-
-          <div className="m-6">
-            <TextField
-              id="outlined-basic3"
-              label="To Do"
-              variant="outlined"
-              sx={{ width: 2.5 / 4, mr: "20px" }}
-              inputRef={taskRef}
-            />
-            <Button
-              variant="contained"
-              size="medium"
-              sx={{ width: 0.5 / 6 }}
-              onClick={() => {
-                handleSubmit();
-              }}
-            >
-              ADD
-            </Button>
-          </div>
+          {permission != "VIEW" ? (
+            <div className="m-6">
+              <TextField
+                id="outlined-basic3"
+                label="To Do"
+                variant="outlined"
+                sx={{ width: 2.5 / 4, mr: "20px" }}
+                inputRef={taskRef}
+              />
+              <Button
+                variant="contained"
+                size="medium"
+                sx={{ width: 0.5 / 6 }}
+                onClick={() => {
+                  handleSubmit();
+                }}
+              >
+                ADD
+              </Button>
+            </div>
+          ) : (
+            ""
+          )}
         </Box>
         {tasks?.map((el) => {
           return (
@@ -196,6 +205,7 @@ export default function Body({
               updateTask={updateTask}
               teamId={teamId}
               members={members}
+              permission={permission}
             />
           );
         })}

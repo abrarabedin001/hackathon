@@ -37,7 +37,7 @@ export default function LeftPanel({
   members,
   addMembers,
   otherTeams,
-  deleteTeam,
+  decideUserTeam,
 }) {
   let memberName = useRef();
   let teamName = useRef();
@@ -261,7 +261,7 @@ export default function LeftPanel({
                 <ListItem key={el.id} disablePadding className="flex">
                   <ListItemButton
                     selected={selectedIndex === index}
-                    onClick={() => handleListItemClick(index, el.id)}
+                    onClick={() => handleListItemClick(index, el.teamId)}
                   >
                     <ListItemIcon>
                       {index === 0 ? <PersonIcon /> : <GroupsIcon />}
@@ -270,8 +270,28 @@ export default function LeftPanel({
                   </ListItemButton>
                   {el.inviteAccepted === "UNDECIDED" ? (
                     <div>
-                      <ListItemButton>Accept</ListItemButton>
-                      <ListItemButton>Reject</ListItemButton>
+                      <ListItemButton
+                        onClick={() => {
+                          decideUserTeam({
+                            userId: el.userId,
+                            teamId: el.teamId,
+                            inviteAccepted: "ACCEPTED",
+                          });
+                        }}
+                      >
+                        Accept
+                      </ListItemButton>
+                      <ListItemButton
+                        onClick={() => {
+                          decideUserTeam({
+                            userId: el.userId,
+                            teamId: el.teamId,
+                            inviteAccepted: "DENIED",
+                          });
+                        }}
+                      >
+                        Reject
+                      </ListItemButton>
                     </div>
                   ) : (
                     ""
