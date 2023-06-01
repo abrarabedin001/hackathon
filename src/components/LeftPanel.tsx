@@ -81,25 +81,27 @@ export default function LeftPanel({
   function handleSubmitMember(e) {
     e.preventDefault();
     const input = e.target.innerText;
-    let id = null;
-    let user = null;
+    if (input) {
+      let id = null;
+      let user = null;
 
-    if (input?.includes("@")) {
-      user = users.filter((el) => {
-        return el.email === input;
-      });
-    } else {
-      user = users.filter((el) => {
-        return el.name === input;
-      });
-    }
-    if (user) {
-      const id = user[0].id;
+      if (input?.includes("@")) {
+        user = users.filter((el) => {
+          return el.email === input;
+        });
+      } else {
+        user = users.filter((el) => {
+          return el.name === input;
+        });
+      }
+      if (user) {
+        const id = user[0].id;
 
-      addMembers({
-        teamId: teamId,
-        userId: id,
-      });
+        addMembers({
+          teamId: teamId,
+          userId: id,
+        });
+      }
     }
 
     // return user;
@@ -256,7 +258,7 @@ export default function LeftPanel({
           <AccordionDetails>
             <List disablePadding>
               {otherTeams?.map((el, index) => (
-                <ListItem key={el.id} disablePadding>
+                <ListItem key={el.id} disablePadding className="flex">
                   <ListItemButton
                     selected={selectedIndex === index}
                     onClick={() => handleListItemClick(index, el.id)}
@@ -266,6 +268,14 @@ export default function LeftPanel({
                     </ListItemIcon>
                     <ListItemText primary={el.team.name} />
                   </ListItemButton>
+                  {el.inviteAccepted === "UNDECIDED" ? (
+                    <div>
+                      <ListItemButton>Accept</ListItemButton>
+                      <ListItemButton>Reject</ListItemButton>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </ListItem>
               ))}
             </List>

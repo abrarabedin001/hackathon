@@ -80,6 +80,37 @@ export const userTeamRouter = createTRPCRouter({
         },
       });
     }),
+
+    updatePermission: protectedProcedure
+    .input(
+      z.object({
+        teamId: z.string(),
+        userId: z.string(),
+        permissions: z.enum(["ADMIN", "EDIT", "VIEW"]),
+        // inviteAccepted: z.enum(["UNDECIDED", "ACCEPTED", "DENIED"]),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.userTeam.update({
+        where: {
+          teamId_userId: {
+            teamId: input.teamId,
+            userId: input.userId,
+          },
+        },
+        data: {
+          team: {
+            connect: { id: input.teamId }, // Specify the team you want to connect
+          },
+
+          user: {
+            connect: { id: input.userId }, // Specify the team you want to connect
+          },
+          permissions: input.permissions,
+          // inviteAccepted: input.inviteAccepted,
+        },
+      });
+    }),
   decideUserTeam: protectedProcedure
     .input(
       z.object({
@@ -136,11 +167,14 @@ export const userTeamRouter = createTRPCRouter({
     }),
 
   delete: protectedProcedure
-    .input(z.object({ text: z.string() }))
+    .input(z.object({ userId: z.string(), teamId: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.delete({
+      return ctx.prisma.userTeam.delete({
         where: {
-          id: input.text,
+          teamId_userId: {
+            teamId: input.teamId,
+            userId: input.userId,
+          },
         },
       });
     }),

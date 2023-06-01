@@ -46,10 +46,13 @@ export default function Body({
   updatePriority,
   updateTask,
   members,
+  deleteMemberFromTeam,
+  updatePermission,
 }) {
   const taskRef = useRef();
   const updateRef = useRef();
   const { data: session } = useSession();
+  let AutoLabel = [{ label: "EDIT" }, { label: "ADMIN" }, { label: "VIEW" }];
 
   const handleSubmit = () => {
     addTasks({
@@ -59,8 +62,8 @@ export default function Body({
     });
   };
 
-  console.log("tasks");
-  console.log(tasks);
+  console.log("MEMBERS/////////////////////////////");
+  console.log(members);
 
   return (
     <>
@@ -70,17 +73,98 @@ export default function Body({
       >
         <Toolbar />
         <Box className="flex-column">
-          <Button
-            variant="contained"
-            size="medium"
-            sx={{ width: 0.5 / 6 }}
-            onClick={() => {
-              deleteTeam({ id: teamId });
-              changeTeamId("");
-            }}
-          >
-            Delete Team
-          </Button>
+          <div className="flex">
+            <Button
+              variant="contained"
+              size="medium"
+              sx={{ width: 0.5 / 6 }}
+              onClick={() => {
+                deleteTeam({ id: teamId });
+                changeTeamId("");
+              }}
+            >
+              Delete Team
+            </Button>
+            <Accordion
+              sx={{ "&.Mui-expanded": { margin: 0, border: "1px solid" } }}
+            >
+              <AccordionSummary
+                expandIcon={<AddIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography>Members</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {members?.map((member) => {
+                    return (
+                      <ListItem key={member.userId} disablePadding>
+                        <ListItemButton>
+                          <ListItemAvatar>
+                            <Avatar
+                              alt={`Avatar n°${member}`}
+                              src={`/static/images/avatar/${member}.jpg`}
+                            />
+                          </ListItemAvatar>
+                          <ListItemText primary={`${member.user.name}`} />
+                        </ListItemButton>
+                        <ListItemButton
+                          onClick={(e) => {
+                            console.log("zzzzzzz");
+                            deleteMemberFromTeam({
+                              userId: member.user.id,
+                              teamId: teamId,
+                            });
+                          }}
+                        >
+                          X
+                        </ListItemButton>
+                        <Autocomplete
+                          key={member.userId}
+                          disablePortal
+                          id="combo-box-demo"
+                          options={AutoLabel}
+                          sx={{ width: 180 }}
+                          // onChange={(e) => {
+                          //   (e.target.innerText){
+                          //     updatePermission({
+                          //       userId: member.userId,
+                          //       teamId: member.teamId,
+                          //       permission: e.target.innerText,
+                          //     });
+                          //   }
+                          onChange={(e) => {
+                            console.log("hell//////////////////////");
+                            if (e.target.innerText) {
+                              // console.log("ki hoise");
+                              // console.log(e.target.innerText);
+                              // console.log(e.target);
+                              updatePermission({
+                                userId: member.userId,
+                                teamId: member.teamId,
+
+                                permissions: e.target.innerText,
+                              });
+                            }
+                          }}
+                          // }}
+                          renderInput={(params) => (
+                            <TextField
+                              key={member.userId}
+                              {...params}
+                              label={member.permissions}
+                            />
+                          )}
+                        />
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          </div>
+
           <div className="m-6">
             <TextField
               id="outlined-basic3"
@@ -115,43 +199,6 @@ export default function Body({
             />
           );
         })}
-        <Accordion
-          sx={{ "&.Mui-expanded": { margin: 0, border: "1px solid" } }}
-        >
-          <AccordionSummary
-            expandIcon={<AddIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography>Members</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <List>
-              {members?.map((member) => {
-                return (
-                  <ListItem key={member.userId} disablePadding>
-                    <ListItemButton>
-                      <ListItemAvatar>
-                        <Avatar
-                          alt={`Avatar n°${member}`}
-                          src={`/static/images/avatar/${member}.jpg`}
-                        />
-                      </ListItemAvatar>
-                      <ListItemText primary={`${member.user.name}`} />
-                    </ListItemButton>
-                    <ListItemButton
-                      onClick={(e) => {
-                        console.log("zzzzzzz");
-                      }}
-                    >
-                      X
-                    </ListItemButton>
-                  </ListItem>
-                );
-              })}
-            </List>
-          </AccordionDetails>
-        </Accordion>
       </Box>
     </>
   );
