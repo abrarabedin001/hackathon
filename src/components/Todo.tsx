@@ -2,15 +2,30 @@ import { type } from "os";
 import { any } from "zod";
 import dayjs from "dayjs";
 import { api } from "~/utils/api";
-
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import GroupsIcon from "@mui/icons-material/Groups";
+import PersonIcon from "@mui/icons-material/Person";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Box,
-  Toolbar,
-  Typography,
-  TextField,
-  Button,
   Checkbox,
   Card,
+  Drawer,
+  Toolbar,
+  List,
+  Typography,
+  Divider,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  TextField,
+  Button,
+  ListItemAvatar,
+  Avatar,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
@@ -27,9 +42,11 @@ const Todo = ({
   updatePriority,
   updateTask,
   teamId,
+  members,
 }) => {
   const utils = api.useContext();
   const { data: session } = useSession();
+  
 
   const { data: assigned } = api.taskassign.getFromSingleTask.useQuery({
     taskid: el.id,
@@ -47,6 +64,12 @@ const Todo = ({
       void utils.taskassign.getFromSingleTask.invalidate();
     },
   });
+  const { mutateAsync: updateAssignment } =
+    api.taskassign.updateAssignment.useMutation({
+      onSuccess(input) {
+        void utils.taskassign.getFromSingleTask.invalidate();
+      },
+    });
 
   const { data: Members } = api.userteam.getAll.useQuery({
     teamId: teamId,
@@ -79,6 +102,11 @@ const Todo = ({
   });
 
   let AutoLabel = [{ label: "HIGH" }, { label: "MEDIUM" }, { label: "LOW" }];
+  let PermissionLabel = [
+    { label: "ADMIN" },
+    { label: "EDIT" },
+    { label: "VIEW" },
+  ];
   return (
     <>
       <Box className="m-3 flex-row  p-5 text-white">
@@ -171,8 +199,33 @@ const Todo = ({
           />
           {assigned?.map((el) => {
             return (
-              <Card className="m-2 p-2">
-                {el.user.email}{" "}
+              <Card className="m-2 flex p-2">
+                <Card className="mx-4">{el.user.email} </Card>
+
+                {/* <Autocomplete
+                  key={el.id}
+                  disablePortal
+                  id="combo-box-demo"
+                  options={PermissionLabel}
+                  sx={{ width: 180 }}
+                  onChange={(e) => {
+                    // updatePriority({
+                    //   id: el.id,
+                    //   priority: e.target.innerText,
+                    // });
+                    console.log("update permission");
+                    updateAssignment({
+                      id: el.id,
+                      permission: e.target.innerText,
+                      taskId: el.taskId,
+                      userId: el.userId,
+                    });
+                    // if(e.target.innerText?){ updateAssignment({id:el.id,permission:e.target.innerText})}
+                  }}
+                  renderInput={(params) => (
+                    <TextField key={el.id} {...params} label={el.priority} />
+                  )}
+                /> */}
                 <Button
                   onClick={() => {
                     deleteAssignment({ id: el.id });
@@ -184,6 +237,7 @@ const Todo = ({
             );
           })}
         </Box>
+        
       </Box>
     </>
   );

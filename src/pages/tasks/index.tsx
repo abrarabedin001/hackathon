@@ -22,6 +22,21 @@ export default function Tasks() {
   const { data: Members } = api.userteam.getAll.useQuery({
     teamId: teamId,
   });
+  const { mutateAsync: deleteMemberFromTeam } = api.userteam.delete.useMutation(
+    {
+      onSuccess(input) {
+        void utils.userteam.getAll.invalidate();
+      },
+    }
+  );
+  const { mutateAsync: updatePermission } = api.userteam.updatePermission.useMutation(
+    {
+      onSuccess(input) {
+        void utils.userteam.getAll.invalidate();
+      },
+    }
+  );
+  // updatePermission
   const { data: otherTeams } = api.userteam.getAllForSameUser.useQuery({
     userId: session?.user.id,
   });
@@ -112,6 +127,8 @@ export default function Tasks() {
             updatePriority={updatePriority}
             updateTask={updateTask}
             members={teamId === "" ? [] : Members}
+            deleteMemberFromTeam={deleteMemberFromTeam}
+            updatePermission={updatePermission}
           />
         ) : (
           ""
