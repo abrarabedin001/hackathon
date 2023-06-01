@@ -20,10 +20,11 @@ model Example {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model EmailPassword {
-  id          String          @id @default(cuid())
-  email       String?        @unique
-  password    String 
+  id       String  @id @default(cuid())
+  email    String? @unique
+  password String
 }
 
 // Necessary for Next auth
@@ -65,6 +66,7 @@ model User {
   teams         Team[]
   UserTeam      UserTeam[]
   TaskAssigned  TaskAssigned[]
+  PersonalTask  PersonalTask[]
 }
 
 model VerificationToken {
@@ -78,15 +80,28 @@ model VerificationToken {
 model Task {
   id           String         @id @default(cuid())
   userId       String
-  isCompleted Boolean         @default(false)
+  isCompleted  Boolean        @default(false)
   name         String
-  teamId       String?        
-  createdBy    User?           @relation(references: [id], onDelete: Cascade, fields: [userId])
-  team         Team?            @relation(references: [id], onDelete: Cascade, fields: [teamId])
-  createdAt    DateTime?       @default(now())
-  priority     Priority?       @default(LOW)
+  teamId       String?
+  createdBy    User?          @relation(references: [id], onDelete: Cascade, fields: [userId])
+  team         Team?          @relation(references: [id], onDelete: Cascade, fields: [teamId])
+  createdAt    DateTime?      @default(now())
+  priority     Priority?      @default(LOW)
   DueDate      DateTime?
-  TaskAssigned TaskAssigned[]  
+  TaskAssigned TaskAssigned[]
+}
+
+model PersonalTask {
+  id          String  @id @default(cuid())
+  userId      String
+  isCompleted Boolean @default(false)
+  name        String
+
+  createdBy User? @relation(references: [id], onDelete: Cascade, fields: [userId])
+
+  createdAt DateTime? @default(now())
+  priority  Priority? @default(LOW)
+  DueDate   DateTime?
 }
 
 enum Priority {
@@ -96,26 +111,24 @@ enum Priority {
 }
 
 model Team {
-  id            String @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String
-  creator       User   @relation(fields: [creatorId], onDelete: Cascade,references: [id])
+  creator       User       @relation(fields: [creatorId], onDelete: Cascade, references: [id])
   creatorId     String
   noTeamMembers Int
-  task Task[]
-  UserTeam UserTeam[]
+  task          Task[]
+  UserTeam      UserTeam[]
 }
 
-
-
 model UserTeam {
-  user User @relation(fields: [userId],onDelete: Cascade,references: [id])
-  userId String
-  team Team @relation(fields: [teamId],onDelete: Cascade,references: [id])
-  teamId String
-  permissions PERMISSIONS? @default(VIEW)
-  inviteAccepted DECISSIONS? @default(UNDECIDED)
-  @@id([teamId, userId])
+  user           User         @relation(fields: [userId], onDelete: Cascade, references: [id])
+  userId         String
+  team           Team         @relation(fields: [teamId], onDelete: Cascade, references: [id])
+  teamId         String
+  permissions    PERMISSIONS? @default(VIEW)
+  inviteAccepted DECISSIONS?  @default(UNDECIDED)
 
+  @@id([teamId, userId])
 }
 
 enum PERMISSIONS {
@@ -131,9 +144,9 @@ enum DECISSIONS {
 }
 
 model TaskAssigned {
-  id     String @id @default(cuid())
+  id     String  @id @default(cuid())
   user   User?   @relation(fields: [userId], references: [id])
-  task   Task   @relation(fields: [taskId], references: [id])
+  task   Task    @relation(fields: [taskId], references: [id])
   userId String?
   taskId String
 }

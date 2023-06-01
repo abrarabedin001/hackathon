@@ -6,6 +6,7 @@ import { teamRouter } from "./routers/team";
 import { userTeamRouter } from "./routers/userteam";
 import { userRouter } from "./routers/user";
 import { taskAssignRouter } from "./routers/taskassign";
+import { personaltaskRouter } from "./routers/personaltask";
 
 /**
  * This is the primary router for your server.
@@ -19,7 +20,8 @@ export const appRouter = createTRPCRouter({
   team: teamRouter,
   userteam: userTeamRouter,
   user: userRouter,
-  taskassign:taskAssignRouter
+  taskassign: taskAssignRouter,
+  personaltask: personaltaskRouter,
 });
 // api.task.getall()
 // export type definition of API
