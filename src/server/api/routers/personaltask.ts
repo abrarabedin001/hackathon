@@ -7,20 +7,20 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 
-export const taskRouter = createTRPCRouter({
+export const personaltaskRouter = createTRPCRouter({
   insert: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
+        userId: z.string().optional(),
 
         name: z.string(),
-        teamId: z.string().optional(),
+
         priority: z.enum(["HIGH", "MEDIUM", "LOW"]).optional(),
         dueDate: z.date().optional(),
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.create({
+      return ctx.prisma.personalTask.create({
         data: {
           ...input,
         },
@@ -36,7 +36,7 @@ export const taskRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
+      return ctx.prisma.personalTask.update({
         where: {
           id: input.id,
         },
@@ -56,7 +56,7 @@ export const taskRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
+      return ctx.prisma.personalTask.update({
         where: {
           id: input.id,
         },
@@ -73,7 +73,7 @@ export const taskRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
+      return ctx.prisma.personalTask.update({
         where: {
           id: input.id,
         },
@@ -90,7 +90,7 @@ export const taskRouter = createTRPCRouter({
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
+      return ctx.prisma.personalTask.update({
         where: {
           id: input.id,
         },
@@ -103,7 +103,7 @@ export const taskRouter = createTRPCRouter({
   updateCompleted: protectedProcedure
     .input(z.object({ id: z.string(), completed: z.boolean() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.update({
+      return ctx.prisma.personalTask.update({
         where: {
           id: input.id,
         },
@@ -129,12 +129,16 @@ export const taskRouter = createTRPCRouter({
     }),
 
   getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.task.findMany();
+    return ctx.prisma.personalTask.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+    });
   }),
   getFromSingleUser: protectedProcedure
     .input(z.object({ userid: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.task.findMany({
+      return ctx.prisma.personalTask.findMany({
         where: {
           userId: input.userid,
         },
@@ -143,7 +147,7 @@ export const taskRouter = createTRPCRouter({
   getFromSingleTeam: protectedProcedure
     .input(z.object({ teamid: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.task.findMany({
+      return ctx.prisma.personalTask.findMany({
         where: {
           teamId: input.teamid,
         },
@@ -153,7 +157,7 @@ export const taskRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.task.delete({
+      return ctx.prisma.personalTask.delete({
         where: {
           id: input.id,
         },

@@ -37,7 +37,9 @@ export default function LeftPanel({
   members,
   addMembers,
   otherTeams,
-  deleteTeam,
+  decideUserTeam,
+  personal,
+  setPersonal,
 }) {
   let memberName = useRef();
   let teamName = useRef();
@@ -81,25 +83,27 @@ export default function LeftPanel({
   function handleSubmitMember(e) {
     e.preventDefault();
     const input = e.target.innerText;
-    let id = null;
-    let user = null;
+    if (input) {
+      let id = null;
+      let user = null;
 
-    if (input?.includes("@")) {
-      user = users.filter((el) => {
-        return el.email === input;
-      });
-    } else {
-      user = users.filter((el) => {
-        return el.name === input;
-      });
-    }
-    if (user) {
-      const id = user[0].id;
+      if (input?.includes("@")) {
+        user = users.filter((el) => {
+          return el.email === input;
+        });
+      } else {
+        user = users.filter((el) => {
+          return el.name === input;
+        });
+      }
+      if (user) {
+        const id = user[0].id;
 
-      addMembers({
-        teamId: teamId,
-        userId: id,
-      });
+        addMembers({
+          teamId: teamId,
+          userId: id,
+        });
+      }
     }
 
     // return user;
@@ -108,6 +112,7 @@ export default function LeftPanel({
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const handleListItemClick = (index: number, id: string) => {
+    setPersonal(false);
     setSelectedIndex(index);
     changeTeamId(id);
   };
@@ -135,6 +140,17 @@ export default function LeftPanel({
         <Divider />
 
         <List disablePadding>
+          <ListItem key="personal" disablePadding>
+            <ListItemButton
+              // selected={selectedIndex === index}
+              onClick={() => setPersonal(true)}
+            >
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Personal"} />
+            </ListItemButton>
+          </ListItem>
           {teams?.map((el, index) => (
             <ListItem key={el.id} disablePadding>
               <ListItemButton
@@ -256,16 +272,44 @@ export default function LeftPanel({
           <AccordionDetails>
             <List disablePadding>
               {otherTeams?.map((el, index) => (
-                <ListItem key={el.id} disablePadding>
+                <ListItem key={el.id} disablePadding className="flex">
                   <ListItemButton
                     selected={selectedIndex === index}
-                    onClick={() => handleListItemClick(index, el.id)}
+                    onClick={() => handleListItemClick(index, el.teamId)}
                   >
                     <ListItemIcon>
                       {index === 0 ? <PersonIcon /> : <GroupsIcon />}
                     </ListItemIcon>
                     <ListItemText primary={el.team.name} />
                   </ListItemButton>
+                  {el.inviteAccepted === "UNDECIDED" ? (
+                    <div>
+                      <ListItemButton
+                        onClick={() => {
+                          decideUserTeam({
+                            userId: el.userId,
+                            teamId: el.teamId,
+                            inviteAccepted: "ACCEPTED",
+                          });
+                        }}
+                      >
+                        Accept
+                      </ListItemButton>
+                      <ListItemButton
+                        onClick={() => {
+                          decideUserTeam({
+                            userId: el.userId,
+                            teamId: el.teamId,
+                            inviteAccepted: "DENIED",
+                          });
+                        }}
+                      >
+                        Reject
+                      </ListItemButton>
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </ListItem>
               ))}
             </List>
