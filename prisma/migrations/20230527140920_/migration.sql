@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `task` ALTER COLUMN `teamId` DROP DEFAULT;

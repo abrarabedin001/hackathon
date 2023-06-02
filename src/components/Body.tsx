@@ -80,7 +80,7 @@ export default function Body({
     <>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+        sx={{ display: "flex", flexDirection: "column", flexGrow: 1, p: 3 }}
       >
         <Toolbar />
         <Box className="flex-column">

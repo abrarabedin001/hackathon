@@ -15,9 +15,12 @@ import {
 } from "@mui/material";
 
 const drawerWidth = 240;
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-export default function NavigationBar() {
+interface NavigationProps {
+  title: string;
+}
+
+export default function NavigationBar(props: NavigationProps) {
   const { data: session } = useSession();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -41,7 +44,7 @@ export default function NavigationBar() {
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            Navigation Bar
+            {props.title}
           </Typography>
           <Box sx={{ flexGrow: 1 }} />{" "}
           {/* Use flexGrow: 1 to push the Avatar to the rightmost corner */}

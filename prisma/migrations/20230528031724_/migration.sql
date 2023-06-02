@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE `userteam` ADD COLUMN `inviteAccepted` ENUM('UNDECIDED', 'ACCEPTED', 'DENIED') NULL DEFAULT 'UNDECIDED',
-    ADD COLUMN `permissions` ENUM('ADMIN', 'EDIT', 'VIEW') NULL DEFAULT 'VIEW';
